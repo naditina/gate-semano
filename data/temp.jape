@@ -1,0 +1,10 @@
+Phase: organic
+Input:  Token Mention Sentence
+Options: control = all debug = true
+
+
+Rule: rule2976
+({Token.string=~"(?i)^((organic|organics))$", Token.category!=IN}
+):binding
+-->
+:binding.Mention={ontology="http://www.fiz-karlsruhe.de/nanon/", autoannotation="true", class="http://www.fiz-karlsruhe.de/nanon/organic", language="en", type="LABELNCSNPL", rule="rule2976"}
