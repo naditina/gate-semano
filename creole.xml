@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<CREOLE-DIRECTORY> 
+      <JAR>lib/elk-owlapi.jar</JAR>
+      <JAR>lib/pellet-owlapiv3.jar</JAR>
+      <JAR>lib/pellet-core.jar</JAR>
+      <JAR>lib/owlapi-bin.jar</JAR>
+      <JAR>lib/HermiT.jar</JAR>
+      <JAR>lib/jfact-1.0.0.jar</JAR>
+      <JAR>lib/lemon.api-1.12.7.jar</JAR>
+      <JAR>lib/org.semanticweb.more.0.1.3.jar</JAR>
+      <JAR>lib/snorocket-core-2.1.1.jar</JAR>
+      <JAR>lib/snorocket-owlapi-2.1.1.jar</JAR>
+      <JAR>lib/pellet-datatypes.jar</JAR>
+      <JAR>lib/pellet-el.jar</JAR>
+      <JAR>lib/pellet-query.jar</JAR>
+      <JAR>lib/pellet-rules.jar</JAR>
+      <JAR>lib/commons-codec-1.3.jar</JAR> 
+      <JAR>lib/commons-httpclient-3.1.jar</JAR>
+      <JAR>lib/commons-logging-1.1.1.jar</JAR>
+      <JAR>lib/owlim-3.0.beta12.jar</JAR>
+      <JAR>lib/trree-3.0.beta12.jar</JAR>
+      <JAR>lib/slf4j-api-1.5.6.jar</JAR>
+      <JAR>lib/slf4j-jdk14-1.5.6.jar</JAR>
+      <JAR>lib/commons-io-1.4.jar</JAR>
+      <JAR>lib/openrdf-sesame-2.3-pr1-onejar.jar</JAR>
+      <JAR SCAN="true">semano.jar</JAR>
+      
+      
+      
+  <!-- creole.xml for Visual Resources -->
+  <CREOLE>    
+  
+  
+  
+  <RESOURCE>
+      <NAME>Semano Rule Base</NAME>
+      <CLASS>semano.rulebaseeditor.CreoleRuleStore</CLASS>
+      <JAR>semano.jar</JAR>
+      <COMMENT>Semano rule store</COMMENT>
+      <HELPURL>http://gate.ac.uk/userguide/sec:alignment:compounddocument</HELPURL>
+      <ICON>lr.gif</ICON>
+    </RESOURCE>
+  
+  
+  
+    <RESOURCE>
+      <NAME>Semano Rule Base Editor</NAME>
+      <JAR>semano.jar</JAR>      
+      <CLASS>semano.rulebaseeditor.RuleBaseViewer</CLASS>
+      <COMMENT>Semano rule base editor</COMMENT>
+      <HELPURL>http://gate.ac.uk/userguide/sec:alignment:compounddoceditor</HELPURL>
+      <GUI TYPE="large">
+        <MAIN_VIEWER/>
+        <RESOURCE_DISPLAYED>semano.rulebaseeditor.CreoleRuleStore</RESOURCE_DISPLAYED>
+      </GUI>
+    </RESOURCE>
+    
+
+    <!-- Ontology Annotation Tool -->    
+    <RESOURCE>
+      <NAME>Semano AV</NAME>
+      <COMMENT>Semano Annotation Viewer</COMMENT>
+      <HELPURL>http://gate.ac.uk/userguide/sec:ontologies:ocat</HELPURL>
+      <JAR>semano.jar</JAR>
+      <CLASS>semano.ontoviewer.OntologyViewer</CLASS>
+    </RESOURCE>
+    
+  </CREOLE>
+      
+</CREOLE-DIRECTORY>
