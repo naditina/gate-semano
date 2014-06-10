@@ -8,6 +8,7 @@ import java.util.Set;
 
 import semano.rulestore.AnnotationRule;
 import semano.rulestore.Japelate;
+import semano.rulestore.Parameter;
 import semano.rulestore.RuleStore;
 import semano.rulestore.RuleStore.Type;
 import semano.util.FileAndDownloadUtil;
@@ -24,17 +25,17 @@ public class JAPECompiler {
 
   static final String JAPE = ".jape";
 
-  public static final String DIRNAME = "JAPE/japefiles/";
+  public static final String DIRNAME = "plugins/Semano/data/japefiles/";
 
   public static final String MULTIPHASEFILENAME = DIRNAME + "1multiphase"
           + JAPE;
 
   // // parameters for the ruleStore when called via main:
-  public static final String JAPE_JPRULES_ROOT = "JAPE/jprules/";
+  public static final String JAPE_JPRULES_ROOT = "plugins/Semano/data/jprules/";
 
-  private static final String JAPE_JAPELATES_DIR = "JAPE/japelates/";
+  private static final String JAPE_JAPELATES_DIR = "plugins/Semano/data/japelates/";
 
-  private static final String TEMP_JAPE_FILE = "JAPE/temp" + JAPE;
+  private static final String TEMP_JAPE_FILE = "plugins/Semano/data/temp" + JAPE;
 
   public static String convertRuleToJAPEFile(AnnotationRule rule) {
     String phasename = RuleStore.getPhasenameForConcept(rule.getClas());
@@ -96,15 +97,25 @@ public class JAPECompiler {
     return japeRules;
   }
 
+  /**
+   * this method replaces parameter placeholders within japelates by actual values from rules
+   * @param JP rule
+   * @return JAPE rule as String
+   */
   private static String createdJAPERule(AnnotationRule rule) {
     Japelate japelate = rule.getJapelate();
     String japeRule = japelate.getJapelateBody();
     int lastParameterPosition = japelate.getParamList().size() - 1;
 
     for(int i = 0; i < lastParameterPosition; i++) {
+      String replacement = rule.getParameters()
+              .get(i);
+      // if the parameter is an ontology entity, we need to remove all spaces around the URI
+      //otherwise it wont annotate relations
+      if(japelate.getParamList().get(i).getType().equals(Parameter.TYPE.ONTOLOGY_ENTITY))
+        replacement=replacement.trim();
       japeRule =
-              japeRule.replaceAll("\\$" + i + "\\$", rule.getParameters()
-                      .get(i));
+              japeRule.replaceAll("\\$" + i + "\\$", replacement);
     }
     int start = japeRule.indexOf("${") + 1;
     int end = japeRule.indexOf("}$") + 1;

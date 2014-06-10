@@ -41,7 +41,6 @@ public class JPRulesGeneratorConcept {
             concept = concept.toLowerCase();
         }
         String[] concepts = concept.split(" ");
-        // boolean prural=Settings.USE_PLURAL;
         boolean pluralFormOn = !type.equals("FORMULA");
         // can be many words, need to work for variable args
         for (int i = 0; i < concepts.length; i++) {
@@ -58,27 +57,29 @@ public class JPRulesGeneratorConcept {
 
     public static String computeLastWord(String clas, String[] concepts,
                                          boolean pluralFormOn) {
+      String lastExpression = concepts[concepts.length - 1];
         // is concept in the ontology plural form:
         boolean isClasPlural = generatePluralForm(clas).equals(clas);
         // is searchstring a plural form:
         boolean isLastWordPlural =
-                generatePluralForm(concepts[concepts.length - 1]).equals(
-                        concepts[concepts.length - 1]);
+                generatePluralForm(lastExpression).equals(
+                        lastExpression);
         // do we need singular|plural regexpr or just searchstring:
         boolean needsSingularPluralAlternatives = !isClasPlural && pluralFormOn;
-        String lastExpression = concepts[concepts.length - 1];
         if (needsSingularPluralAlternatives) {
-            String singularForm = concepts[concepts.length - 1];
-            if (isLastWordPlural) {
-                String singularFormNew =
-                        generateSingularFormFromPlural(concepts[concepts.length - 1],
-                                clas);
-                if (singularForm.length() > CRITICAL_LENGTH_PLURAL) {
-                    singularForm = singularFormNew;
-                }
+            String singularForm = lastExpression;
+//            if (isLastWordPlural) {
+//                String singularFormNew =
+//                        generateSingularFormFromPlural(lastExpression,
+//                                clas);
+//                if (singularForm.length() > CRITICAL_LENGTH_PLURAL) {
+//                    singularForm = singularFormNew;
+//                }
+//            }
+            String pluralForm = generatePluralForm(lastExpression);
+            if(!singularForm.equals(pluralForm)){
+              lastExpression = "(" + singularForm + "|" + pluralForm + ")";
             }
-            String pluralForm = generatePluralForm(concepts[concepts.length - 1]);
-            lastExpression = "(" + singularForm + "|" + pluralForm + ")";
         }
         return lastExpression;
     }
@@ -86,8 +87,8 @@ public class JPRulesGeneratorConcept {
     public static String generateSingularFormFromPlural(String word, String clas) {
         if (word.endsWith("ies")) return word.substring(0, word.length() - 3) + "y";
         if (word.endsWith("sses")) return word.substring(0, word.length() - 2);
-
-        return word.substring(0, word.length() - 1);
+        if (word.endsWith("s")) return word.substring(0, word.length() - 1);
+        return word;
     }
 
     private static String generatePluralForm(String initialString) {
@@ -97,10 +98,9 @@ public class JPRulesGeneratorConcept {
                     initialString.substring(0, initialString.length() - 1) + "ies";
         } else if (initialString.endsWith("ss")) {
             pluralForm = initialString + "es";
-        } else if (initialString.endsWith("s")) {
+        } else if (initialString.endsWith("s") || initialString.endsWith("ed")) {
             pluralForm = initialString;
         }
-        // System.out.println(pluralForm);
         return pluralForm;
     }
 

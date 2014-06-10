@@ -188,30 +188,9 @@ public class OntologyUtil {
         return ontology;
     }
 
-    // TODO NN only a-zA-Z_ should be possible
     public static String convertToProperUriString(String text) {
-        String result = text.replace("-", "_");
+        String result = convertToValidLabel(text);
         result = result.replace(" ", "_");
-        result = result.replace("!", "");
-        result = result.replace("\"", "");
-        result = result.replace("'", "");
-        result = result.replace("+", "");
-        result = result.replace(":", "");
-        result = result.replace(";", "");
-        result = result.replace(",", "");
-        result = result.replace("*", "");
-        result = result.replace("#", "");
-        result = result.replace("�", "");
-        result = result.replace("$", "");
-        result = result.replace("%", "");
-        result = result.replace("&", "");
-        result = result.replace("/", "");
-        result = result.replace("(", "");
-        result = result.replace(")", "");
-        result = result.replace("=", "");
-        result = result.replace("?", "");
-        result = result.replace("<", "");
-        result = result.replace(">", "");
         return result;
     }
 
@@ -225,11 +204,23 @@ public class OntologyUtil {
     public static String convertToValidLabel(String name) {
 
         String result = name.replaceAll("\\|\"", "");
+        result = splitCamelCase(result);
         result = result.replaceAll("\\\\", "");
         result = result.replaceAll("[^a-zA-Z0-9]", " ");
         result = result.replace("  ", " ");
         return result;
     }
+    
+    static String splitCamelCase(String s) {
+      return s.replaceAll(
+         String.format("%s|%s|%s",
+            "(?<=[A-Z])(?=[A-Z][a-z])",
+            "(?<=[^A-Z])(?=[A-Z])",
+            "(?<=[A-Za-z])(?=[^A-Za-z])"
+         ),
+         " "
+      );
+   }
 
     /**
      * @param classes TODO
@@ -325,5 +316,24 @@ public class OntologyUtil {
         int lastIndexOf = separatorPosition(uri);
         String ontology = uri.substring(0, lastIndexOf + 1);
         return ontology;
+    }
+
+    public static void main(String[] args){
+      String[] tests = {
+              "lowercase as sdsd",        // [lowercase]
+              "Class",            // [Class]
+              "MyClass sda",          // [My Class]
+              "HTML",             // [HTML]
+              "PDFLoader",        // [PDF Loader]
+              "AString",          // [A String]
+              "SimpleXMLParser dsfsd mSmSm asfdasfda sDGSgsSsSsSsSsSs",  // [Simple XML Parser]
+              "GL11Version",      // [GL 11 Version]
+              "99Bottles",        // [99 Bottles]
+              "May5",             // [May 5]
+              "BFG9000",          // [BFG 9000]
+          };
+          for (String test : tests) {
+              System.out.println("[" + splitCamelCase(test) + "]");
+          }
     }
 }

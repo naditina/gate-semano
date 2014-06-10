@@ -55,7 +55,7 @@ public class RuleBaseViewer extends AbstractVisualResource implements
    */
   private static final long serialVersionUID = 3977303230621759543L;
 
-  public static final String JAPE_JPRULES_ROOT = "JAPE/jprules/";
+  public static final String JAPE_JPRULES_ROOT = "plugins/Semano/data/jprules/";
 
   public static final String JPRULE_RELATIONS_DIR = JAPE_JPRULES_ROOT
           + "relations/";
@@ -209,21 +209,19 @@ public class RuleBaseViewer extends AbstractVisualResource implements
       // start at 2 to avoid ontology and rule name printing
       // again....
       for(int i = AnnotationRule.MINIMUM_PARAMETER_NUMBER; i < paramsJapelate.size(); i++) {
+        String separator = "";
+        if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
         Parameter paramJ = paramsJapelate.get(i);
         String paramR = paramsRule.get(i);
-        if(paramR.trim().equals("")) paramR = "EMPTY";
-        String separator = "";
-        if(i != paramsJapelate.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
-        switch(paramJ.getType()) {
-          case LITERAL:
-            paramListHTML.append("<font color='blue'>" + paramR + "</font>"
-                    + separator);
-            break;
-          case ONTOLOGY_ENTITY:
-            paramListHTML.append("<font color='red'>"
-                    + (new ONodeIDImpl(paramR, false)).getResourceName()
-                    + "</font>" + separator);
-            break;
+        formatParameterPair(paramListHTML, separator, paramJ, paramR);
+      }
+      if(paramsRule.size() > paramsJapelate.size()){
+        for(int i = paramsJapelate.size(); i < paramsRule.size(); i++) {
+          String separator = "";
+          if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
+          Parameter paramJ = paramsJapelate.get(paramsJapelate.size()-1);
+          String paramR = paramsRule.get(i);
+          formatParameterPair(paramListHTML, separator, paramJ, paramR);
         }
       }
     } else {
@@ -234,6 +232,22 @@ public class RuleBaseViewer extends AbstractVisualResource implements
     paramListHTML.append("</html>");
     return paramListHTML.toString();
 
+  }
+
+  public void formatParameterPair(StringBuilder paramListHTML,
+          String separator, Parameter paramJ, String paramR) {
+    if(paramR.trim().equals("")) paramR = "EMPTY";
+    switch(paramJ.getType()) {
+      case LITERAL:
+        paramListHTML.append("<font color='blue'>" + paramR + "</font>"
+                + separator);
+        break;
+      case ONTOLOGY_ENTITY:
+        paramListHTML.append("<font color='red'>"
+                + (new ONodeIDImpl(paramR, false)).getResourceName()
+                + "</font>" + separator);
+        break;
+    }
   }
 
   /** Initialises the GUI */

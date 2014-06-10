@@ -23,10 +23,10 @@ import java.util.Set;
 public class Ontology2JPRuleGenerator {
 
     private static Set<String> ontologies = new HashSet<>();
-    private static final String DIRNAME = "JAPE/Ontologien-49c/";
+    private static final String DIRNAME = "plugins/Semano/data/Ontologien-49c/";
     static final int CRITICAL_LENGTH = 1;
-    private String jpRulesDirectory = "JAPE/jprules1/";
-    private String japelateDirectory = "JAPE/japelates/";
+    private String jpRulesDirectory = "plugins/Semano/data/jprules/";
+    private String japelateDirectory = "plugins/Semano/data/japelates/";
 
     static {
         ontologies.add(DIRNAME + "mergedNanOnOntologyRDF.owl");
@@ -41,9 +41,6 @@ public class Ontology2JPRuleGenerator {
         new Ontology2JPRuleGenerator().run();
     }
 
-    private void addOntologies(String fileName){
-        ontologies.add(fileName);
-    }
 
     private void run() {
         OntologyParser op = new OntologyParser();

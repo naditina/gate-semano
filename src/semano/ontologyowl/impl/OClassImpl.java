@@ -176,6 +176,7 @@ public class OClassImpl extends OResourceImpl implements OClass {
                 this.nodeId.toString(), theClosure);
     }
 
+    //NN: this is the method that is called when the ontology is used by a transducer!
     public boolean isSubClassOf(OClass aClass, OConstants.Closure closure) {
         return ontologyService.isSubClassOf(aClass.getONodeID().toString(),
                 this.nodeId.toString(), closure);

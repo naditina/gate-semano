@@ -1,4 +1,4 @@
-package semano;
+package semano.ontologyowl;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;

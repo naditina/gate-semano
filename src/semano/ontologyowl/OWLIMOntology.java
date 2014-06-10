@@ -25,7 +25,6 @@ import gate.creole.ontology.OntologyTripleStore;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import semano.Reasoning;
 import semano.ontologyowl.impl.OWLOntologyServiceImpl;
 
 import java.io.File;
@@ -99,10 +98,10 @@ public class OWLIMOntology
 
 
     @CreoleParameter(comment = "classify ontology on loading?", defaultValue = "true")
-    public void setClassifyOnLoad(boolean classify) {
+    public void setClassifyOnLoad(Boolean classify) {
       this.classify = classify;
     }
-    public boolean getClassifyOnLoad() {
+    public Boolean getClassifyOnLoad() {
         return classify;
     }
     protected boolean classify;
@@ -302,8 +301,8 @@ public class OWLIMOntology
 
             // get the configuration file , check if the system import files
             // are there
-            File configDir = new File(pluginDir, "config");
-            File repoConfig;
+//            File configDir = new File(pluginDir, "config");
+//            File repoConfig;
 
             // This was how it was done with the unmanaged repository: use a
             // persist configuration when the persist parameter is true.
@@ -315,25 +314,25 @@ public class OWLIMOntology
 
             // with the managed repository always use the same config (not decided
             // yet wheter to use the persist variation
-            repoConfig = new File(configDir, "owlim-max-nopartial.ttl");
+//            repoConfig = new File(configDir, "owlim-max-nopartial.ttl");
 
-            logger.debug("Using config " + repoConfig.getAbsolutePath());
-            System.out.println("Using config file: " + repoConfig.getAbsolutePath());
+//            logger.debug("Using config " + repoConfig.getAbsolutePath());
+//            System.out.println("Using config file: " + repoConfig.getAbsolutePath());
 
-            if (!repoConfig.exists()) {
-                throw new ResourceInstantiationException(
-                        "Repository config file not found " + repoConfig.getAbsolutePath());
-            }
-            File owlDefFile = new File(configDir, "owl.rdfs");
-            if (!owlDefFile.exists()) {
-                throw new ResourceInstantiationException(
-                        "OWL definition file not found " + owlDefFile.getAbsolutePath());
-            }
-            File rdfsDefFile = new File(configDir, "rdf-schema.rdf");
-            if (!rdfsDefFile.exists()) {
-                throw new ResourceInstantiationException(
-                        "RDFS definition file not found " + rdfsDefFile.getAbsolutePath());
-            }
+//            if (!repoConfig.exists()) {
+//                throw new ResourceInstantiationException(
+//                        "Repository config file not found " + repoConfig.getAbsolutePath());
+//            }
+//            File owlDefFile = new File(configDir, "owl.rdfs");
+//            if (!owlDefFile.exists()) {
+//                throw new ResourceInstantiationException(
+//                        "OWL definition file not found " + owlDefFile.getAbsolutePath());
+//            }
+//            File rdfsDefFile = new File(configDir, "rdf-schema.rdf");
+//            if (!rdfsDefFile.exists()) {
+//                throw new ResourceInstantiationException(
+//                        "RDFS definition file not found " + rdfsDefFile.getAbsolutePath());
+//            }
 
 
             OWLOntologyServiceImpl oService = new OWLOntologyServiceImpl(this);
@@ -343,7 +342,7 @@ public class OWLIMOntology
             // create a managed repository
             oService.createManagedRepository(
                     storageFolderDir.toURI().toURL(),
-                    "owlim3", repoConfig.toURI().toURL());
+                    "owlim3");
             ontologyService = oService;
 
             logger.debug("Repository created");

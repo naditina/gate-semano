@@ -10,8 +10,8 @@ import java.util.Set;
 
 public class Settings {
     private static Logger logger = Logger.getLogger(Settings.class);
-    private static String PROPERTIES_FILE = "ontologyBasedAnnotation.properties";
-    private static final String ANNOTATION_PROPERTIES_FILE = "annotationproperties.properties";
+    private static String PROPERTIES_FILE = "plugins/Semano/ontologyBasedAnnotation.properties";
+    private static final String ANNOTATION_PROPERTIES_FILE = "plugins/Semano/annotationproperties.properties";
 
 
     public static HashSet<AnnotationMetaData> annotationProperties = new HashSet<AnnotationMetaData>();
