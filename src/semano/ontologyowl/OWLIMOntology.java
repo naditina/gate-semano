@@ -25,7 +25,6 @@ import gate.creole.ontology.OntologyTripleStore;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import semano.Reasoning;
 import semano.ontologyowl.impl.OWLOntologyServiceImpl;
 
 import java.io.File;
@@ -54,29 +53,6 @@ public class OWLIMOntology
     private static final long serialVersionUID = 1L;
 
 
-//    @CreoleParameter(comment = "", defaultValue = "nadejda")
-//    public void setAuthor(String newauthor) {
-//        author = newauthor;
-//    }
-//
-//    public String getAuthor() {
-//        return author;
-//    }
-//
-//    protected String author = "";
-//
-//
-//    @CreoleParameter(comment = "", defaultValue = "en")
-//    public void setLanguage(String newlanguage) {
-//        language = newlanguage;
-//    }
-//
-//    public String getLanguage() {
-//        return language;
-//    }
-//
-//    protected String language = "en";
-
     @CreoleParameter(comment = "", disjunction = "url")
     public void setRdfXmlURL(URL theURL) {
         rdfXmlURL = theURL;
@@ -98,61 +74,15 @@ public class OWLIMOntology
     protected Reasoning.Reasoner reasoner;
 
 
-    @CreoleParameter(comment = "classify ontology on loading?", defaultValue = "true")
-    public void setClassifyOnLoad(boolean classify) {
+    @CreoleParameter(comment = "classify ontology on loading?", defaultValue = "false")
+    public void setClassifyOnLoad(Boolean classify) {
       this.classify = classify;
     }
-    public boolean getClassifyOnLoad() {
+    public Boolean getClassifyOnLoad() {
         return classify;
     }
     protected boolean classify;
 
-//
-//  @CreoleParameter(comment="")
-//  public void setN3URL(CreoleRuleStore ruleStore) {
-//    this.ruleStore = ruleStore;
-//  }
-//  public CreoleRuleStore getN3URL() {
-//    return ruleStore;
-//  }
-//  protected CreoleRuleStore ruleStore;
-
-    //  @Optional
-//  @CreoleParameter(comment="",disjunction="url")
-//  public void setNtriplesURL(URL theURL) {
-//    ntriplesURL = theURL;
-//  }
-//  public URL getNtriplesURL() {
-//    return ntriplesURL;
-//  }
-//  protected URL ntriplesURL;
-//
-//  @Optional
-//  @CreoleParameter(comment="",disjunction="url")
-//  public void setTurtleURL(URL theURL) {
-//    turtleURL = theURL;
-//  }
-//  public URL getTurtleURL() {
-//    return turtleURL;
-//  }
-//  protected URL turtleURL;
-//
-//  @Optional
-//  @CreoleParameter(comment="Directory that should contain the repository director")
-//  /**
-//   * Set the name of the directory in which the directory "storage-folder"
-//   * which contains the ontology repository data will be created.
-//   * If the directory does not exist but its parent exists, it will be 
-//   * created.
-//   */
-//  public void setDataDirectoryURL(URL dataDirectoryURL) {
-//    this.dataDirectoryURL = dataDirectoryURL;
-//  }
-//  public URL getDataDirectoryURL() {
-//    return dataDirectoryURL;
-//  }
-//  protected URL dataDirectoryURL;
-//
     @Optional
     @CreoleParameter(
             comment = "Ontology base URI, default is http://gate.ac.uk/dummybaseuri#"
@@ -166,42 +96,7 @@ public class OWLIMOntology
     }
 
     protected String baseURI;
-//
-//  @Optional
-//  @CreoleParameter(
-//      comment="The URL of a file containing mappings between ontology import URIs and URLs or blank"
-//      )
-//  public void setMappingsURL(URL theMappings) {
-//    mappingsURL = theMappings;
-//  }
-//  public URL getMappingsURL() {
-//    return mappingsURL;
-//  }
-//  protected URL mappingsURL;
-//
-//  @CreoleParameter(
-//      comment="If the ontology imports specified in the ontology should get automatically loaded",
-//      defaultValue = "true")
-//  public void setLoadImports(Boolean doit) {
-//    loadImports = doit;
-//  }
-//  public Boolean getLoadImports() {
-//    return loadImports;
-//  }
-//  protected Boolean loadImports;
 
-  /* this does not seem to work?
-  @CreoleParameter(
-      comment="The format of the ontology file to load",
-      defaultValue="rdfxml")
-  public void setOntologyFileFormat(OntologyFormat theFormat) {
-    ontologyFileFormat = theFormat;
-  }
-  public OntologyFormat getOntologyFileFormat() {
-    return ontologyFileFormat;
-  }
-  private OntologyFormat ontologyFileFormat;
-   * */
 
     private File dataDirectory;
     private File storageFolderDir;
@@ -297,43 +192,7 @@ public class OWLIMOntology
                     Long.toString(System.currentTimeMillis(), 36);
             storageFolderDir = new File(dataDirectory, storageFolderName);
             storageFolderDir.mkdir();
-            // TODO: replace by logger.info
-            System.out.println("Storing data in folder: " + storageFolderDir.getAbsolutePath());
-
-            // get the configuration file , check if the system import files
-            // are there
-            File configDir = new File(pluginDir, "config");
-            File repoConfig;
-
-            // This was how it was done with the unmanaged repository: use a
-            // persist configuration when the persist parameter is true.
-            //if(getPersistent()) {
-            //  repoConfig = new File(configDir,"owlim-max-nopartial-persist.ttl");
-            //} else {
-            //  repoConfig = new File(configDir,"owlim-max-nopartial.ttl");
-            //}
-
-            // with the managed repository always use the same config (not decided
-            // yet wheter to use the persist variation
-            repoConfig = new File(configDir, "owlim-max-nopartial.ttl");
-
-            logger.debug("Using config " + repoConfig.getAbsolutePath());
-            System.out.println("Using config file: " + repoConfig.getAbsolutePath());
-
-            if (!repoConfig.exists()) {
-                throw new ResourceInstantiationException(
-                        "Repository config file not found " + repoConfig.getAbsolutePath());
-            }
-            File owlDefFile = new File(configDir, "owl.rdfs");
-            if (!owlDefFile.exists()) {
-                throw new ResourceInstantiationException(
-                        "OWL definition file not found " + owlDefFile.getAbsolutePath());
-            }
-            File rdfsDefFile = new File(configDir, "rdf-schema.rdf");
-            if (!rdfsDefFile.exists()) {
-                throw new ResourceInstantiationException(
-                        "RDFS definition file not found " + rdfsDefFile.getAbsolutePath());
-            }
+//            System.out.println("Storing data in folder: " + storageFolderDir.getAbsolutePath());
 
 
             OWLOntologyServiceImpl oService = new OWLOntologyServiceImpl(this);
@@ -343,7 +202,7 @@ public class OWLIMOntology
             // create a managed repository
             oService.createManagedRepository(
                     storageFolderDir.toURI().toURL(),
-                    "owlim3", repoConfig.toURI().toURL());
+                    "owlim3");
             ontologyService = oService;
 
             logger.debug("Repository created");

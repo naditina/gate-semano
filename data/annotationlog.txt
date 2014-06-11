@@ -1,0 +1,4 @@
+
+Starting annotation with thread 1 2014/06/10 10:18:59
+init finished 2014/06/10 10:22:40
+Starting annotation with thread 1 2014/06/10 10:51:05

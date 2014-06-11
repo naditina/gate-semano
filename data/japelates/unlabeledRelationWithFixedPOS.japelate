@@ -1,0 +1,54 @@
+JAPELATE HEADER:
+0: LITERAL, rulename
+1: LITERAL, ontology URI
+2: ONTOLOGY_ENTITY, property name that needs to be appended to the ontology URI to get a full resource URI
+3: ONTOLOGY_ENTITY, domain concept name
+4: LITERAL, Token.category domain
+5: ONTOLOGY_ENTITY, domain concept name
+6: LITERAL, Token.category range
+
+JAPELATE BODY:
+Rule: $0$
+(({Mention.class=="$3$", Token.category==$4$}):domain
+({Mention.class=="$5$", Token.category==$6$}):range
+):binding
+-->
+{
+    Annotation domainAnnotation = null, rangeAnnotation = null;
+    gate.AnnotationSet annotsDomain = (gate.AnnotationSet)bindings.get("domain");
+    if(annotsDomain != null && !annotsDomain.isEmpty()) {
+      if(annotsDomain.size() > 1) System.exit(1);
+      domainAnnotation = annotsDomain.iterator().next();
+      System.out.println("Domain annotation: " + domainAnnotation);
+    }
+    gate.AnnotationSet annotsRange = (gate.AnnotationSet)bindings.get("range");
+    if(annotsRange != null && !annotsRange.isEmpty()) {
+      if(annotsRange.size() > 1) System.exit(1);
+      rangeAnnotation = annotsRange.iterator().next();
+      System.out.println("Range annotation: " + rangeAnnotation);
+    }
+
+    if(domainAnnotation != null && rangeAnnotation != null) {
+      gate.AnnotationSet relationAnnots = (gate.AnnotationSet)bindings
+              .get("binding");
+
+      gate.FeatureMap features = Factory.newFeatureMap();
+      features.put("ontology", "$1$");
+      features.put("autoannotation", "true");
+      features.put("domain", domainAnnotation.getId());
+      features.put("range", rangeAnnotation.getId());
+      features.put("property", "$2$");
+      features.put("language", "en");
+      features.put("japelate", "unlabeledProperty");
+      features.put("rule", "$0$");
+
+      // create the new annotation
+      try {
+        outputAS.add(relationAnnots.firstNode().getOffset(), relationAnnots
+                .lastNode().getOffset(), "Mention", features);
+      }
+      catch(InvalidOffsetException e) {
+        throw new JapeException(e);
+      }
+   }
+}

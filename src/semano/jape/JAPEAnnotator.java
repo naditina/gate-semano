@@ -33,7 +33,7 @@ import semano.util.FileAndDownloadUtil;
 
 public class JAPEAnnotator {
 
-    private static final String logFileName = "JAPE/annotationlog.txt";
+    private static final String logFileName = "plugins/Semano/data/annotationlog.txt";
 
 
     public CorpusController initializeAnnie() throws GateException, IOException {
@@ -188,7 +188,7 @@ public class JAPEAnnotator {
                     System.out.println(o);
                 }
             } else {
-                Ontology o = loadOntology(new File("JAPE/Ontologien-49c/mergedNanOnOntologyRDF.owl"));
+                Ontology o = loadOntology(new File("plugins/Semano/data/mergedNanOnOntologyRDF.owl"));
                 japeTransducer = initilalizeTransducer(multiphaseJape,o);
 
             }
@@ -269,9 +269,9 @@ public class JAPEAnnotator {
      */
     public static void annotate(String[] args) {
         JAPEAnnotator j = new JAPEAnnotator();
-        String rootCorpusDirectory = "JAPE/NEW/annotation";
-        String saveLocation = "JAPE/NEW";
-        String multiphaseJapeFile = "JAPE/japefiles/1multiphase.jape";
+        String rootCorpusDirectory = "plugins/Semano/data/NEW/annotation";
+        String saveLocation = "plugins/Semano/data/NEW";
+        String multiphaseJapeFile = "plugins/Semano/data/japefiles/1multiphase.jape";
         boolean annie = false;
         int numberOfThreads = 1;
         int threadNumber = 0;

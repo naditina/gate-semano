@@ -8,6 +8,7 @@ import java.util.Set;
 
 import semano.rulestore.AnnotationRule;
 import semano.rulestore.Japelate;
+import semano.rulestore.Parameter;
 import semano.rulestore.RuleStore;
 import semano.rulestore.RuleStore.Type;
 import semano.util.FileAndDownloadUtil;
@@ -22,45 +23,47 @@ public class JAPECompiler {
   private static final String MULTIPHASECODE =
           "MultiPhase: SemanoRules\nPhases:";
 
-  static final String JAPE = ".jape";
+  public static final String JAPE = ".jape";
 
-  public static final String DIRNAME = "JAPE/japefiles/";
+  public static final String JAPE_DIRNAME = "plugins/Semano/data/japefiles/";
 
-  public static final String MULTIPHASEFILENAME = DIRNAME + "1multiphase"
+  public static final String MULTIPHASEFILENAME = JAPE_DIRNAME + "1multiphase"
           + JAPE;
 
   // // parameters for the ruleStore when called via main:
-  public static final String JAPE_JPRULES_ROOT = "JAPE/jprules/";
+  public static final String JAPE_JPRULES_ROOT = "data/jprules/";
 
-  private static final String JAPE_JAPELATES_DIR = "JAPE/japelates/";
+  private static final String JAPE_JAPELATES_DIR = "data/japelates/";
 
-  private static final String TEMP_JAPE_FILE = "JAPE/temp" + JAPE;
 
-  public static String convertRuleToJAPEFile(AnnotationRule rule) {
+  public static String convertRuleToJAPEFile(AnnotationRule rule, String filename) {
     String phasename = RuleStore.getPhasenameForConcept(rule.getClas());
-    FileAndDownloadUtil.writeStringToFile(TEMP_JAPE_FILE,
+    FileAndDownloadUtil.writeStringToFile(filename,
             generateHeader(phasename), true);
     FileAndDownloadUtil.appendStringToFile(createdJAPERule(rule),
-            TEMP_JAPE_FILE);
-    return TEMP_JAPE_FILE;
+            filename);
+    return filename;
   }
 
-  public static void convertJP2JAPE(RuleStore rs, Type ruleType) {
+  public static String convertJP2JAPE(RuleStore rs, Type ruleType, String pluginPath) {
     System.out.println("compiling rules to jape");
-    FileAndDownloadUtil.createDirectory(DIRNAME, true);
-    FileAndDownloadUtil.writeStringToFile(MULTIPHASEFILENAME, MULTIPHASECODE,
+    String directoryName = pluginPath+JAPE_DIRNAME;
+    FileAndDownloadUtil.createDirectory(directoryName, true);
+    String filenameJAPE = pluginPath+MULTIPHASEFILENAME;
+    FileAndDownloadUtil.writeStringToFile(filenameJAPE, MULTIPHASECODE,
             true);
-    compile(DIRNAME, MULTIPHASEFILENAME, rs, ruleType);
+    compile(directoryName, filenameJAPE, rs, ruleType);
     System.out.println("done!");
+    return filenameJAPE;
   }
 
   public static void convertJP2JAPE(RuleStore rs) {
     System.out.println("compiling rules to jape");
-    FileAndDownloadUtil.createDirectory(DIRNAME, true);
+    FileAndDownloadUtil.createDirectory(JAPE_DIRNAME, true);
     FileAndDownloadUtil.writeStringToFile(MULTIPHASEFILENAME, MULTIPHASECODE,
             true);
-    compile(DIRNAME, MULTIPHASEFILENAME, rs, Type.CONCEPT);
-    compile(DIRNAME, MULTIPHASEFILENAME, rs, Type.RELATION);
+    compile(JAPE_DIRNAME, MULTIPHASEFILENAME, rs, Type.CONCEPT);
+    compile(JAPE_DIRNAME, MULTIPHASEFILENAME, rs, Type.RELATION);
     System.out.println("done!");
   }
 
@@ -96,15 +99,25 @@ public class JAPECompiler {
     return japeRules;
   }
 
+  /**
+   * this method replaces parameter placeholders within japelates by actual values from rules
+   * @param JP rule
+   * @return JAPE rule as String
+   */
   private static String createdJAPERule(AnnotationRule rule) {
     Japelate japelate = rule.getJapelate();
     String japeRule = japelate.getJapelateBody();
     int lastParameterPosition = japelate.getParamList().size() - 1;
 
     for(int i = 0; i < lastParameterPosition; i++) {
+      String replacement = rule.getParameters()
+              .get(i);
+      // if the parameter is an ontology entity, we need to remove all spaces around the URI
+      //otherwise it wont annotate relations
+      if(japelate.getParamList().get(i).getType().equals(Parameter.TYPE.ONTOLOGY_ENTITY))
+        replacement=replacement.trim();
       japeRule =
-              japeRule.replaceAll("\\$" + i + "\\$", rule.getParameters()
-                      .get(i));
+              japeRule.replaceAll("\\$" + i + "\\$", replacement);
     }
     int start = japeRule.indexOf("${") + 1;
     int end = japeRule.indexOf("}$") + 1;
