@@ -7,6 +7,10 @@
  */
 package semano.rulebaseeditor;
 
+import com.ontotext.gate.vr.ClassNode;
+import com.ontotext.gate.vr.ClassNodeWithParent;
+import com.ontotext.gate.vr.IFolder;
+import com.ontotext.gate.vr.OntoTreeModel;
 import gate.Annotation;
 import gate.Gate;
 import gate.Resource;
@@ -17,42 +21,6 @@ import gate.creole.ontology.Ontology;
 import gate.event.CreoleEvent;
 import gate.event.CreoleListener;
 import gate.swing.ColorGenerator;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
 import semano.ontologyowl.ONodeIDImpl;
 import semano.ontoviewer.OntologyTreeListenerBasic;
 import semano.ontoviewer.OntologyTreePanel;
@@ -61,10 +29,18 @@ import semano.rulestore.AnnotationRule;
 import semano.rulestore.Japelate;
 import semano.rulestore.Parameter;
 
-import com.ontotext.gate.vr.ClassNode;
-import com.ontotext.gate.vr.ClassNodeWithParent;
-import com.ontotext.gate.vr.IFolder;
-import com.ontotext.gate.vr.OntoTreeModel;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
+import java.util.List;
 
 /**
  * the basic structure of the ontology viewer manages the selection of
@@ -79,13 +55,13 @@ public class RuleBaseViewer extends AbstractVisualResource implements
    */
   private static final long serialVersionUID = 3977303230621759543L;
 
-//  public static final String JAPE_JPRULES_ROOT = "data/jprules/";
-//
-//  public static final String JPRULE_RELATIONS_DIR = JAPE_JPRULES_ROOT
-//          + "relations/";
-//
-//  public static final String JPRULE_CONCEPTS_DIR = JAPE_JPRULES_ROOT
-//          + "concepts/";
+  public static final String JAPE_JPRULES_ROOT = "JAPE/jprules/";
+
+  public static final String JPRULE_RELATIONS_DIR = JAPE_JPRULES_ROOT
+          + "relations/";
+
+  public static final String JPRULE_CONCEPTS_DIR = JAPE_JPRULES_ROOT
+          + "concepts/";
 
   public CreoleRuleStore ruleStore;
 
@@ -111,9 +87,9 @@ public class RuleBaseViewer extends AbstractVisualResource implements
    * RESOURCES...
    */
 
-  java.net.URL editURL;
+  java.net.URL editURL = this.getClass().getResource("pencil.gif");
 
-  java.net.URL deleteURL;
+  java.net.URL deleteURL = this.getClass().getResource("delete.gif");
 
   /**
    * Instance of JTabbedPane to show the ontology Viewer and the
@@ -135,26 +111,6 @@ public class RuleBaseViewer extends AbstractVisualResource implements
   protected final static ColorGenerator colourGenerator = new ColorGenerator();
   
   
-  
-
-  public RuleBaseViewer() {
-    super();
-    String pluginPath="";
-    try {
-      File pluginDir = new File(Gate.getGateHome().toString()+"/plugins/Semano/");
-      pluginPath = pluginDir.getAbsoluteFile().toURI().toURL().toString();      
-      if(pluginPath!=null ){
-        pluginPath=pluginPath.substring(5, pluginPath.length());
-        System.out.println("plugin directory: "+pluginPath);       
-      }
-      editURL= new File(pluginPath+"pencil.gif").toURI().toURL();
-      deleteURL= new File(pluginPath+"delete.gif").toURI().toURL();
-      System.out.println("loading icons from "+editURL.toString());
-    } catch(MalformedURLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
 
   public int getX() {
     return table.getX();
@@ -253,19 +209,21 @@ public class RuleBaseViewer extends AbstractVisualResource implements
       // start at 2 to avoid ontology and rule name printing
       // again....
       for(int i = AnnotationRule.MINIMUM_PARAMETER_NUMBER; i < paramsJapelate.size(); i++) {
-        String separator = "";
-        if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
         Parameter paramJ = paramsJapelate.get(i);
         String paramR = paramsRule.get(i);
-        formatParameterPair(paramListHTML, separator, paramJ, paramR);
-      }
-      if(paramsRule.size() > paramsJapelate.size()){
-        for(int i = paramsJapelate.size(); i < paramsRule.size(); i++) {
-          String separator = "";
-          if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
-          Parameter paramJ = paramsJapelate.get(paramsJapelate.size()-1);
-          String paramR = paramsRule.get(i);
-          formatParameterPair(paramListHTML, separator, paramJ, paramR);
+        if(paramR.trim().equals("")) paramR = "EMPTY";
+        String separator = "";
+        if(i != paramsJapelate.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
+        switch(paramJ.getType()) {
+          case LITERAL:
+            paramListHTML.append("<font color='blue'>" + paramR + "</font>"
+                    + separator);
+            break;
+          case ONTOLOGY_ENTITY:
+            paramListHTML.append("<font color='red'>"
+                    + (new ONodeIDImpl(paramR, false)).getResourceName()
+                    + "</font>" + separator);
+            break;
         }
       }
     } else {
@@ -276,22 +234,6 @@ public class RuleBaseViewer extends AbstractVisualResource implements
     paramListHTML.append("</html>");
     return paramListHTML.toString();
 
-  }
-
-  public void formatParameterPair(StringBuilder paramListHTML,
-          String separator, Parameter paramJ, String paramR) {
-    if(paramR.trim().equals("")) paramR = "EMPTY";
-    switch(paramJ.getType()) {
-      case LITERAL:
-        paramListHTML.append("<font color='blue'>" + paramR + "</font>"
-                + separator);
-        break;
-      case ONTOLOGY_ENTITY:
-        paramListHTML.append("<font color='red'>"
-                + (new ONodeIDImpl(paramR, false)).getResourceName()
-                + "</font>" + separator);
-        break;
-    }
   }
 
   /** Initialises the GUI */

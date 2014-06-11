@@ -1,33 +1,25 @@
 package semano.rulebaseeditor;
 
-import gate.Document;
-import gate.Factory;
-import gate.FeatureMap;
-import gate.Gate;
-import gate.ProcessingResource;
-import gate.Resource;
+import gate.*;
 import gate.creole.ExecutionException;
 import gate.creole.ResourceInstantiationException;
 import gate.creole.metadata.CreoleParameter;
 import gate.creole.metadata.CreoleResource;
 import gate.creole.ontology.Ontology;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.apache.log4j.Logger;
-
 import semano.jape.JAPECompiler;
 import semano.jape.RuleStoreAnnotator;
 import semano.rulestore.AnnotationRule;
 import semano.rulestore.Japelate;
 import semano.rulestore.RuleStore;
 import semano.rulestore.RuleStore.Type;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 @CreoleResource(name = "Semano Rule Store", interfaceName = "gate.ProcessingResource", comment = "Rule base store created as a temporary in-memory repository", helpURL = "http://gate.ac.uk/userguide/sec:ontologies:ontoplugin:owlim")
 public class CreoleRuleStore implements ProcessingResource {
@@ -45,11 +37,9 @@ public class CreoleRuleStore implements ProcessingResource {
 
   public static final String JAPELATEPARAM = "japelatesDir";
 
-  public static final String JAPE_JPRULES_ROOT = "data/jprules/";
+  public static final String JAPE_JPRULES_ROOT = "JAPE/jprules/";
 
-  public static final String JAPE_JAPELATES_ROOT = "data/japelates/";  
-
-  private static final String TEMP_JAPE_FILE = "/data/temp" + JAPECompiler.JAPE;
+  public static final String JAPE_JAPELATES_ROOT = "JAPE/japelates/";
 
   private static final Object ONTOLOGY = "ontology";
 
@@ -66,25 +56,9 @@ public class CreoleRuleStore implements ProcessingResource {
 
   private Collection<StoreModificationListener> listeners=new  HashSet<>();
 
-  private String pluginPath;
-
   public CreoleRuleStore() {
     super();
     featureMap = Factory.newFeatureMap();
-    File pluginDir = new File(Gate.getGateHome().toString()+"/plugins/Semano/");
-    try {
-      pluginPath= pluginDir.getAbsoluteFile().toURI().toURL().toString();
-    } catch(MalformedURLException e) {
-      e.printStackTrace();
-    }
-    if(pluginPath!=null ){
-      pluginPath=pluginPath.substring(5, pluginPath.length());
-      System.out.println("using plugin directory: "+pluginPath);
-      if(pluginDir.exists()){
-        ruleStore = new RuleStore(pluginPath.toString()+JAPE_JPRULES_ROOT, pluginPath.toString()+JAPE_JAPELATES_ROOT);
-        return;
-      }      
-    }
     ruleStore = new RuleStore(JAPE_JPRULES_ROOT, JAPE_JAPELATES_ROOT);
   }
 
@@ -320,8 +294,8 @@ public class CreoleRuleStore implements ProcessingResource {
   public void annotateWithRule(String ruleID, Document doc) {
     AnnotationRule rule = getRule(ruleID);
     if(rule!=null){
-      String JAPEfilename=JAPECompiler.convertRuleToJAPEFile(rule, pluginPath+TEMP_JAPE_FILE);
-      RuleStoreAnnotator annotator = new RuleStoreAnnotator(JAPEfilename,this.ontology);
+      String JAPEfilename=JAPECompiler.convertRuleToJAPEFile(rule);
+      RuleStoreAnnotator annotator = new RuleStoreAnnotator(JAPEfilename);
       annotator.annotateDoc(doc, doc.getAnnotations().getName());
     }
     
@@ -329,15 +303,15 @@ public class CreoleRuleStore implements ProcessingResource {
   
 
   public void annotate(Document doc) {
-    String japefile=JAPECompiler.convertJP2JAPE(ruleStore, Type.RELATION, pluginPath); 
-    RuleStoreAnnotator annotator = new RuleStoreAnnotator(japefile,this.ontology);
+    JAPECompiler.convertJP2JAPE(ruleStore); 
+    RuleStoreAnnotator annotator = new RuleStoreAnnotator(JAPECompiler.MULTIPHASEFILENAME);
     annotator.annotateDoc(doc, doc.getAnnotations().getName());
   }
   
 
   public void annotate(Document doc, Type ruleType) {
-    String japefile=JAPECompiler.convertJP2JAPE(ruleStore, ruleType, pluginPath); 
-    RuleStoreAnnotator annotator = new RuleStoreAnnotator(japefile,this.ontology);
+    JAPECompiler.convertJP2JAPE(ruleStore, ruleType); 
+    RuleStoreAnnotator annotator = new RuleStoreAnnotator(JAPECompiler.MULTIPHASEFILENAME);
     annotator.annotateDoc(doc, doc.getAnnotations().getName());
   }
 

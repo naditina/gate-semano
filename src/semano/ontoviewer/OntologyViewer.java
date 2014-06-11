@@ -1222,28 +1222,28 @@ public class OntologyViewer extends AbstractDocumentView implements
     return iw;
   }
     
-//
-//  public static void autoannotate(Document doc, OWLIMOntology o) {
-//    OntologyViewer ov = new OntologyViewer();
-//    ov.currentOntology=o;
-//    ov.document=doc;
-//    ov.initData();
-//    boolean asynchronous=false;
-//    ov.annotationManager.autoAnnotate(asynchronous);
-////    while(!ov.annotationManager.isJobsFinished()){
-////      try {
-////        Thread.sleep(3000);
-////      }
-////      catch(InterruptedException e) {
-////        // TODO Auto-generated catch block
-////        e.printStackTrace();
-////      }
-////    }
-//    int size = doc.getAnnotations().size();
-//    System.out.println("annotation of document "+doc.getName()+" finished; created "+size+" annotations");
-////    for(Annotation a: doc.getAnnotations().size())
-//    ov.unloadOntologies();
-//  }
+
+  public static void autoannotate(Document doc, OWLIMOntology o) {
+    OntologyViewer ov = new OntologyViewer();
+    ov.currentOntology=o;
+    ov.document=doc;
+    ov.initData();
+    boolean asynchronous=false;
+    ov.annotationManager.autoAnnotate(asynchronous);
+//    while(!ov.annotationManager.isJobsFinished()){
+//      try {
+//        Thread.sleep(3000);
+//      }
+//      catch(InterruptedException e) {
+//        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//      }
+//    }
+    int size = doc.getAnnotations().size();
+    System.out.println("annotation of document "+doc.getName()+" finished; created "+size+" annotations");
+//    for(Annotation a: doc.getAnnotations().size())
+    ov.unloadOntologies();
+  }
 
 
   /**

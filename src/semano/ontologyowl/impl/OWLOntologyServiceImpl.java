@@ -7,8 +7,8 @@ import gate.util.ClosableIterator;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
+import semano.Reasoning.Reasoner;
 import semano.ontologyowl.*;
-import semano.ontologyowl.Reasoning.Reasoner;
 
 import java.io.*;
 import java.net.URL;
@@ -63,8 +63,9 @@ public class OWLOntologyServiceImpl implements OWLOntologyService {
      *
      * @param repoLoc
      * @param repositoryID
+     * @param configFileURL
      */
-    public void createManagedRepository(URL repoLoc, String repositoryID) {
+    public void createManagedRepository(URL repoLoc, String repositoryID, URL configFileURL) {
 
         init();
     }
@@ -830,7 +831,7 @@ public class OWLOntologyServiceImpl implements OWLOntologyService {
     }
 
     public boolean hasClass(String classURI) throws GateOntologyException {
-        return !op.getClasses(classURI).isEmpty();
+        return false;
     }
 
     public boolean hasInstance(OURI theURI, ONodeID theClass, Closure closure) {
@@ -894,7 +895,8 @@ public class OWLOntologyServiceImpl implements OWLOntologyService {
 
     public boolean isSubClassOf(String theSuperClassURI, String theSubClassURI,
                                 Closure direct) throws GateOntologyException {
-        return op.isSubClassOf(theSuperClassURI,theSubClassURI,direct);
+        // TODO Auto-generated method stub
+        return false;
     }
 
     public boolean isSubPropertyOf(String aSuperPropertyURI,

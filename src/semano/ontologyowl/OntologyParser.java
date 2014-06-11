@@ -42,11 +42,11 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
-import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import semano.ontologyowl.Reasoning.Reasoner;
+import semano.Reasoning;
+import semano.Reasoning.Reasoner;
 import semano.ontologyowl.impl.Property;
 import semano.ontologyowl.impl.ResourceInfo;
 import semano.util.OntologyUtil;
@@ -105,9 +105,8 @@ public class OntologyParser {
                 ontologies.add(o);
                 this.filenames.put(o, fileName);
                 if(classify){
-                  System.out.println("classifying ontology");
                   OWLReasoner OWLreasoner=Reasoning.getReasoner(o, reasoner);
-                  OWLreasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+//                  OWLreasoner.prepareReasoner();
                   OWLreasoners.put(o, OWLreasoner);
                 }
                 logger.debug("loaded ontology " + fileName);
@@ -134,12 +133,6 @@ public class OntologyParser {
             loadSubclassAxioms(o);
             loadObjectProperties();
             loadDatatypeProperties();
-            if(classify){
-              System.out.println("classifying ontology");
-              OWLReasoner OWLreasoner=Reasoning.getReasoner(o, reasoner);
-              OWLreasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
-              OWLreasoners.put(o, OWLreasoner);
-            }
             logger.debug("loaded ontology " + filename);
         } else {
             System.err.println("could not load ontology: " + filename);
@@ -1373,14 +1366,6 @@ public class OntologyParser {
       
     }
 
-    public boolean isSubClassOf(String theSuperClassURI, String theSubClassURI,
-            Closure closure) {
-      OWLClass owlsuperClass = getOWLClass(theSuperClassURI);
-      if(closure.equals(Closure.TRANSITIVE_CLOSURE) && classify){
-       OWLOntology o = entities2Ontologies.get(owlsuperClass);
-       return OWLreasoners.get(o).getSubClasses(owlsuperClass, false).containsEntity(getOWLClass(theSubClassURI));        
-      }
-      return getSuperClasses(getOWLClass(theSubClassURI),  closure).contains(owlsuperClass);
-    }
+
 
 }

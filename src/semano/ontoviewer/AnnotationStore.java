@@ -12,27 +12,18 @@ import gate.creole.ontology.OResource;
 import gate.creole.ontology.ObjectProperty;
 import gate.creole.ontology.Ontology;
 import gate.util.GateRuntimeException;
-
-import java.awt.HeadlessException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
-
 import semano.ontologyowl.AbstractOWLOntology;
 import semano.ontologyowl.AnnotationValue;
+import semano.ontoviewer.autoannotation.Annotator;
+import semano.ontoviewer.autoannotation.AutoAnnotatorStringBased;
 import semano.util.OntologyUtil;
 import semano.util.Settings;
+
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -331,39 +322,39 @@ public class AnnotationStore{
   // // Adding new annotations
   //
   // ////////////////////////////
-//
-//  /**
-//   * Method to add a new annotation
-//   * 
-//   * @param classValue
-//   * @param all
-//   */
-//  public ArrayList<Annotation> addNewAnnotation(
-//          OResource entity,
-//          boolean all,
-//          FeatureMap map,
-//          semano.ontoviewer.AnnotationMetaData selectedAnnotationType,
-//          boolean isProperty) {
-//    // get first selection from text area
-//    int start = ontoViewer.documentTextArea.getSelectionStart();
-//    int end = ontoViewer.documentTextArea.getSelectionEnd();
-//    String text = ontoViewer.documentTextArea.getText();
-//
-//    String searchstring = ontoViewer.documentTextArea.getText().substring(
-//            start, end);
-//    HashMap<Integer, Integer> offsets = new HashMap<Integer, Integer>();
-//    if(all && !isProperty) {
-//      Annotator annotator = new AutoAnnotatorStringBased(this, text);
-//      offsets = annotator.search(true,selectedAnnotationType,
-//              searchstring);
-//    }
-//    else {
-//      offsets.put(start, end);
-//    }
-//    return addAnnotationsWithOffsets(text, entity, map, selectedAnnotationType,
-//            isProperty, offsets, false);
-//
-//  }
+
+  /**
+   * Method to add a new annotation
+   * 
+   * @param classValue
+   * @param all
+   */
+  public ArrayList<Annotation> addNewAnnotation(
+          OResource entity,
+          boolean all,
+          FeatureMap map,
+          semano.ontoviewer.AnnotationMetaData selectedAnnotationType,
+          boolean isProperty) {
+    // get first selection from text area
+    int start = ontoViewer.documentTextArea.getSelectionStart();
+    int end = ontoViewer.documentTextArea.getSelectionEnd();
+    String text = ontoViewer.documentTextArea.getText();
+
+    String searchstring = ontoViewer.documentTextArea.getText().substring(
+            start, end);
+    HashMap<Integer, Integer> offsets = new HashMap<Integer, Integer>();
+    if(all && !isProperty) {
+      Annotator annotator = new AutoAnnotatorStringBased(this, text);
+      offsets = annotator.search(true,selectedAnnotationType,
+              searchstring);
+    }
+    else {
+      offsets.put(start, end);
+    }
+    return addAnnotationsWithOffsets(text, entity, map, selectedAnnotationType,
+            isProperty, offsets, false);
+
+  }
 
   /**
    * @param node
@@ -945,11 +936,11 @@ public class AnnotationStore{
     }
     return result;
   }
-//
-//  public void autoAnnotate(boolean animate) {
-//    new AutoAnnotatorStringBased(this, this.ontoViewer.documentTextArea.getText()).autoAnnotate(animate);
-//    
-//  }
+
+  public void autoAnnotate(boolean animate) {
+    new AutoAnnotatorStringBased(this, this.ontoViewer.documentTextArea.getText()).autoAnnotate(animate);
+    
+  }
 
   LinkedHashMap<String, LinkedHashSet<Annotation>> getEntityName2AnnotationList() {
     return EntityName2AnnotationList;
