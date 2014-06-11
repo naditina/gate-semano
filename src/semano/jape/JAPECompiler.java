@@ -23,45 +23,47 @@ public class JAPECompiler {
   private static final String MULTIPHASECODE =
           "MultiPhase: SemanoRules\nPhases:";
 
-  static final String JAPE = ".jape";
+  public static final String JAPE = ".jape";
 
-  public static final String DIRNAME = "plugins/Semano/data/japefiles/";
+  public static final String JAPE_DIRNAME = "plugins/Semano/data/japefiles/";
 
-  public static final String MULTIPHASEFILENAME = DIRNAME + "1multiphase"
+  public static final String MULTIPHASEFILENAME = JAPE_DIRNAME + "1multiphase"
           + JAPE;
 
   // // parameters for the ruleStore when called via main:
-  public static final String JAPE_JPRULES_ROOT = "plugins/Semano/data/jprules/";
+  public static final String JAPE_JPRULES_ROOT = "data/jprules/";
 
-  private static final String JAPE_JAPELATES_DIR = "plugins/Semano/data/japelates/";
+  private static final String JAPE_JAPELATES_DIR = "data/japelates/";
 
-  private static final String TEMP_JAPE_FILE = "plugins/Semano/data/temp" + JAPE;
 
-  public static String convertRuleToJAPEFile(AnnotationRule rule) {
+  public static String convertRuleToJAPEFile(AnnotationRule rule, String filename) {
     String phasename = RuleStore.getPhasenameForConcept(rule.getClas());
-    FileAndDownloadUtil.writeStringToFile(TEMP_JAPE_FILE,
+    FileAndDownloadUtil.writeStringToFile(filename,
             generateHeader(phasename), true);
     FileAndDownloadUtil.appendStringToFile(createdJAPERule(rule),
-            TEMP_JAPE_FILE);
-    return TEMP_JAPE_FILE;
+            filename);
+    return filename;
   }
 
-  public static void convertJP2JAPE(RuleStore rs, Type ruleType) {
+  public static String convertJP2JAPE(RuleStore rs, Type ruleType, String pluginPath) {
     System.out.println("compiling rules to jape");
-    FileAndDownloadUtil.createDirectory(DIRNAME, true);
-    FileAndDownloadUtil.writeStringToFile(MULTIPHASEFILENAME, MULTIPHASECODE,
+    String directoryName = pluginPath+JAPE_DIRNAME;
+    FileAndDownloadUtil.createDirectory(directoryName, true);
+    String filenameJAPE = pluginPath+MULTIPHASEFILENAME;
+    FileAndDownloadUtil.writeStringToFile(filenameJAPE, MULTIPHASECODE,
             true);
-    compile(DIRNAME, MULTIPHASEFILENAME, rs, ruleType);
+    compile(directoryName, filenameJAPE, rs, ruleType);
     System.out.println("done!");
+    return filenameJAPE;
   }
 
   public static void convertJP2JAPE(RuleStore rs) {
     System.out.println("compiling rules to jape");
-    FileAndDownloadUtil.createDirectory(DIRNAME, true);
+    FileAndDownloadUtil.createDirectory(JAPE_DIRNAME, true);
     FileAndDownloadUtil.writeStringToFile(MULTIPHASEFILENAME, MULTIPHASECODE,
             true);
-    compile(DIRNAME, MULTIPHASEFILENAME, rs, Type.CONCEPT);
-    compile(DIRNAME, MULTIPHASEFILENAME, rs, Type.RELATION);
+    compile(JAPE_DIRNAME, MULTIPHASEFILENAME, rs, Type.CONCEPT);
+    compile(JAPE_DIRNAME, MULTIPHASEFILENAME, rs, Type.RELATION);
     System.out.println("done!");
   }
 

@@ -7,10 +7,6 @@
  */
 package semano.rulebaseeditor;
 
-import com.ontotext.gate.vr.ClassNode;
-import com.ontotext.gate.vr.ClassNodeWithParent;
-import com.ontotext.gate.vr.IFolder;
-import com.ontotext.gate.vr.OntoTreeModel;
 import gate.Annotation;
 import gate.Gate;
 import gate.Resource;
@@ -21,6 +17,42 @@ import gate.creole.ontology.Ontology;
 import gate.event.CreoleEvent;
 import gate.event.CreoleListener;
 import gate.swing.ColorGenerator;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
 import semano.ontologyowl.ONodeIDImpl;
 import semano.ontoviewer.OntologyTreeListenerBasic;
 import semano.ontoviewer.OntologyTreePanel;
@@ -29,18 +61,10 @@ import semano.rulestore.AnnotationRule;
 import semano.rulestore.Japelate;
 import semano.rulestore.Parameter;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.*;
-import java.util.List;
+import com.ontotext.gate.vr.ClassNode;
+import com.ontotext.gate.vr.ClassNodeWithParent;
+import com.ontotext.gate.vr.IFolder;
+import com.ontotext.gate.vr.OntoTreeModel;
 
 /**
  * the basic structure of the ontology viewer manages the selection of
@@ -55,13 +79,13 @@ public class RuleBaseViewer extends AbstractVisualResource implements
    */
   private static final long serialVersionUID = 3977303230621759543L;
 
-  public static final String JAPE_JPRULES_ROOT = "plugins/Semano/data/jprules/";
-
-  public static final String JPRULE_RELATIONS_DIR = JAPE_JPRULES_ROOT
-          + "relations/";
-
-  public static final String JPRULE_CONCEPTS_DIR = JAPE_JPRULES_ROOT
-          + "concepts/";
+//  public static final String JAPE_JPRULES_ROOT = "data/jprules/";
+//
+//  public static final String JPRULE_RELATIONS_DIR = JAPE_JPRULES_ROOT
+//          + "relations/";
+//
+//  public static final String JPRULE_CONCEPTS_DIR = JAPE_JPRULES_ROOT
+//          + "concepts/";
 
   public CreoleRuleStore ruleStore;
 
@@ -87,9 +111,9 @@ public class RuleBaseViewer extends AbstractVisualResource implements
    * RESOURCES...
    */
 
-  java.net.URL editURL = this.getClass().getResource("pencil.gif");
+  java.net.URL editURL;
 
-  java.net.URL deleteURL = this.getClass().getResource("delete.gif");
+  java.net.URL deleteURL;
 
   /**
    * Instance of JTabbedPane to show the ontology Viewer and the
@@ -111,6 +135,26 @@ public class RuleBaseViewer extends AbstractVisualResource implements
   protected final static ColorGenerator colourGenerator = new ColorGenerator();
   
   
+  
+
+  public RuleBaseViewer() {
+    super();
+    String pluginPath="";
+    try {
+      File pluginDir = new File(Gate.getGateHome().toString()+"/plugins/Semano/");
+      pluginPath = pluginDir.getAbsoluteFile().toURI().toURL().toString();      
+      if(pluginPath!=null ){
+        pluginPath=pluginPath.substring(5, pluginPath.length());
+        System.out.println("plugin directory: "+pluginPath);       
+      }
+      editURL= new File(pluginPath+"pencil.gif").toURI().toURL();
+      deleteURL= new File(pluginPath+"delete.gif").toURI().toURL();
+      System.out.println("loading icons from "+editURL.toString());
+    } catch(MalformedURLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 
   public int getX() {
     return table.getX();

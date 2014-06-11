@@ -3,15 +3,18 @@ package semano.util;
 import org.apache.log4j.Logger;
 import semano.ontoviewer.AnnotationMetaData;
 
+import gate.Gate;
+
 import java.io.*;
+import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 public class Settings {
     private static Logger logger = Logger.getLogger(Settings.class);
-    private static String PROPERTIES_FILE = "plugins/Semano/ontologyBasedAnnotation.properties";
-    private static final String ANNOTATION_PROPERTIES_FILE = "plugins/Semano/annotationproperties.properties";
+    private static String PROPERTIES_FILE = "ontologyBasedAnnotation.properties";
+    private static final String ANNOTATION_PROPERTIES_FILE = "annotationproperties.properties";
 
 
     public static HashSet<AnnotationMetaData> annotationProperties = new HashSet<AnnotationMetaData>();
@@ -71,71 +74,6 @@ public class Settings {
     public static String AUTOANNOTATION = "autoannotation";
     public static String ANNOTATION_VALUE = "value";
     public static String ANNOTATION_TYPE = "type";
-    //  public static  String ONTOLOGY_ANNOTATION_TYPE = "Mention";
-    //  public static  String ONTOLOGY_CLASS_URI_FEATURE_NAME = "class";
-    //  public static  String ONTOLOGY_INSTANCE_URI_FEATURE_NAME = "inst";
-    //  public static  String ONTOLOGY_PROPERTY_URI_FEATURE_NAME = "property";
-//  
-//  public static  boolean WHOLEWORDONLY_INSTANCE = false;
-//  public static  boolean WHOLEWORDONLY_SYNONYM = true;
-//  public static  boolean WHOLEWORDONLY_ACRONYM = true;
-//  public static  boolean WHOLEWORDONLY_EXPRESSION = true;
-//  public static  boolean WHOLEWORDONLY_PASSAGE = false;
-//  public static  boolean WHOLEWORDONLY_FORMULA = true;
-//  public static  boolean WHOLEWORDONLY_NEWENTITY = false;
-//  public static  boolean WHOLEWORDONLY_EXPRESSIONLESSRELATION = false;
-
-//  public static  HashMap<OntologyAnnotation.Feature,Boolean> settingsMapWholeWord = new HashMap<OntologyAnnotation.Feature, Boolean>(){
-//  
-//    {
-//      put(OntologyAnnotation.Feature.INSTANCE,WHOLEWORDONLY_INSTANCE);
-//      put(OntologyAnnotation.Feature.SYNONYM,WHOLEWORDONLY_SYNONYM);
-//      put(OntologyAnnotation.Feature.ACRONYM,WHOLEWORDONLY_ACRONYM);
-//      put(OntologyAnnotation.Feature.EXPRESSION,WHOLEWORDONLY_EXPRESSION);
-//      put(OntologyAnnotation.Feature.PASSAGE,WHOLEWORDONLY_PASSAGE);
-//      put(OntologyAnnotation.Feature.FORMULA,WHOLEWORDONLY_FORMULA);
-//      put(OntologyAnnotation.Feature.NEWENTITY,WHOLEWORDONLY_NEWENTITY);
-//      put(OntologyAnnotation.Feature.EXPRESSIONLESSRELATION,WHOLEWORDONLY_EXPRESSIONLESSRELATION);
-//      
-//    }
-//  };
-
-//  public static  boolean CASESENSITIVE_INSTANCE = false;
-//  public static  boolean CASESENSITIVE_SYNONYM = false;
-//  public static  boolean CASESENSITIVE_ACRONYM = true;
-//  public static  boolean CASESENSITIVE_EXPRESSION = false;
-//  public static  boolean CASESENSITIVE_PASSAGE = false;
-//  public static  boolean CASESENSITIVE_FORMULA = true;
-//  public static  boolean CASESENSITIVE_NEWENTITY = false;
-//  public static  boolean CASESENSITIVE_EXPRESSIONLESSRELATION = false;
-
-//  public static  HashMap<OntologyAnnotation.Feature,Boolean> settingsMapCaseSensitive = new HashMap<OntologyAnnotation.Feature, Boolean>(){
-//    
-//    {
-//      put(OntologyAnnotation.Feature.INSTANCE,CASESENSITIVE_INSTANCE);
-//      put(OntologyAnnotation.Feature.SYNONYM,CASESENSITIVE_SYNONYM);
-//      put(OntologyAnnotation.Feature.ACRONYM,CASESENSITIVE_ACRONYM);
-//      put(OntologyAnnotation.Feature.EXPRESSION,CASESENSITIVE_EXPRESSION);
-//      put(OntologyAnnotation.Feature.PASSAGE,CASESENSITIVE_PASSAGE);
-//      put(OntologyAnnotation.Feature.FORMULA,CASESENSITIVE_FORMULA);
-//      put(OntologyAnnotation.Feature.NEWENTITY,CASESENSITIVE_NEWENTITY);
-//      put(OntologyAnnotation.Feature.EXPRESSIONLESSRELATION,CASESENSITIVE_EXPRESSIONLESSRELATION);
-//      
-//      
-//    }
-////  };
-//  
-//  //annotation property uris
-//  public static  String URL_EXPRESSIONLESS_RELATION = "http://www.fiz-karlsruhe.de/nanon/expressionlessRelation";
-//  public static  String URL_NEW_ENTITY = "http://www.fiz-karlsruhe.de/nanon/sourceIdentifier";
-//  public static  String URL_FORMULA = "http://www.fiz-karlsruhe.de/nanon/chemicalFormula";
-//  public static  String URL_PASSAGE = "http://www.fiz-karlsruhe.de/nanon/passage";
-//  public static  String URL_EXPRESSION = "http://www.fiz-karlsruhe.de/nanon/expression";
-//  public static  String URL_ACRONYM = "http://omv.ontoware.org/2005/05/ontology#acronym";
-//  public static  String URL_SYNONYM = "http://www.geneontology.org/formats/oboInOwl#synonym";
-//  public static  String URL_NOANNOTATION = "http://www.fiz-karlsruhe.de/nanon/noAnnotation";
-//  
-
     //Options dialog: feature labels
 
     /**
@@ -154,8 +92,6 @@ public class Settings {
     //GUI
     public static String DEFAULT_DOMAIN_ANNOTATION_URI_FEATURE_NAME = "domainAnnotation";
     public static String DEFAULT_RANGE_ANNOTATION_URI_FEATURE_NAME = "rangeAnnotation";
-    //  public static  String EXPRESSION_GUI_LABEL = "Expression";
-//  public static  String NEW_CLASS_PROPERTY_GUI_LABEL = "New Class/Property";
     public static boolean DEFAULT_APPLYTOALL = true;
     public static String PROPERTIES_GUI_LABEL = "Properties";
     public static String CLASSES_GUI_LABEL = "Classes";
@@ -211,7 +147,15 @@ public class Settings {
 
         try {
             logger.info("Reading properties");
-            FileInputStream inStream = new FileInputStream(PROPERTIES_FILE);
+            String pluginPath="";
+              File pluginDir = new File(Gate.getGateHome().toString()+"/plugins/Semano/");
+              pluginPath = pluginDir.getAbsoluteFile().toURI().toURL().toString();      
+              if(pluginPath!=null ){
+                pluginPath=pluginPath.substring(5, pluginPath.length());
+                System.out.println("plugin directory: "+pluginPath);       
+              }
+            
+            FileInputStream inStream = new FileInputStream(pluginPath+PROPERTIES_FILE);
             Properties properties = new Properties();
             properties.load(inStream);
 
@@ -236,14 +180,6 @@ public class Settings {
             AUTOANNOTATION = properties.getProperty("AUTOANNOTATION", AUTOANNOTATION);
             ANNOTATION_VALUE = properties.getProperty("ANNOTATION_VALUE", ANNOTATION_VALUE);
             ANNOTATION_TYPE = properties.getProperty("ANNOTATION_TYPE", ANNOTATION_TYPE);
-//      URL_EXPRESSIONLESS_RELATION = properties.getProperty("URL_EXPRESSIONLESS_RELATION", URL_EXPRESSIONLESS_RELATION);
-//      URL_NEW_ENTITY = properties.getProperty("URL_NEW_ENTITY", URL_NEW_ENTITY);
-//      URL_FORMULA = properties.getProperty("URL_FORMULA", URL_FORMULA);
-//      URL_PASSAGE = properties.getProperty("URL_PASSAGE", URL_PASSAGE);
-//      URL_EXPRESSION = properties.getProperty("URL_EXPRESSION", URL_EXPRESSION);
-//      URL_ACRONYM = properties.getProperty("URL_ACRONYM", URL_ACRONYM);
-//      URL_SYNONYM = properties.getProperty("URL_SYNONYM", URL_SYNONYM);
-//      URL_NOANNOTATION = properties.getProperty("URL_NOANNOTATION", URL_NOANNOTATION);
             DEFAULT_ANNOTATION_SET = properties.getProperty("DEFAULT_ANNOTATION_SET", DEFAULT_ANNOTATION_SET);
             DEFAULT_ANNOTATION_TYPE = properties.getProperty("DEFAULT_ANNOTATION_TYPE", DEFAULT_ANNOTATION_TYPE);
             DEFAULT_CLASS_URI_FEATURE_NAME = properties.getProperty("DEFAULT_CLASS_URI_FEATURE_NAME", DEFAULT_CLASS_URI_FEATURE_NAME);
@@ -253,8 +189,6 @@ public class Settings {
             DEFAULT_RANGE_URI_FEATURE_NAME = properties.getProperty("DEFAULT_RANGE_URI_FEATURE_NAME", DEFAULT_RANGE_URI_FEATURE_NAME);
             DEFAULT_DOMAIN_ANNOTATION_URI_FEATURE_NAME = properties.getProperty("DEFAULT_DOMAIN_ANNOTATION_URI_FEATURE_NAME", DEFAULT_DOMAIN_ANNOTATION_URI_FEATURE_NAME);
             DEFAULT_RANGE_ANNOTATION_URI_FEATURE_NAME = properties.getProperty("DEFAULT_RANGE_ANNOTATION_URI_FEATURE_NAME", DEFAULT_RANGE_ANNOTATION_URI_FEATURE_NAME);
-//      EXPRESSION_GUI_LABEL = properties.getProperty("EXPRESSION_GUI_LABEL", EXPRESSION_GUI_LABEL);
-//      NEW_CLASS_PROPERTY_GUI_LABEL = properties.getProperty("NEW_CLASS_PROPERTY_GUI_LABEL", NEW_CLASS_PROPERTY_GUI_LABEL);
             DEFAULT_APPLYTOALL = Boolean.parseBoolean(properties.getProperty("DEFAULT_APPLYTOALL", Boolean.toString(DEFAULT_APPLYTOALL)));
             PROPERTIES_GUI_LABEL = properties.getProperty("PROPERTIES_GUI_LABEL", PROPERTIES_GUI_LABEL);
             CLASSES_GUI_LABEL = properties.getProperty("CLASSES_GUI_LABEL", CLASSES_GUI_LABEL);
@@ -295,24 +229,6 @@ public class Settings {
             DEFAULT_LANGUAGE = properties.getProperty("DEFAULT_LANGUAGE", DEFAULT_LANGUAGE);
             DEBUG = Boolean.parseBoolean(properties.getProperty("DEBUG", Boolean.toString(DEBUG)));
             EVALUATION = Boolean.parseBoolean(properties.getProperty("EVALUATION", Boolean.toString(EVALUATION)));
-
-//      WHOLEWORDONLY_INSTANCE=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_INSTANCE", Boolean.toString(WHOLEWORDONLY_INSTANCE)));
-//      WHOLEWORDONLY_SYNONYM=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_SYNONYM", Boolean.toString(WHOLEWORDONLY_SYNONYM)));
-//      WHOLEWORDONLY_ACRONYM=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_ACRONYM", Boolean.toString(WHOLEWORDONLY_ACRONYM)));
-//      WHOLEWORDONLY_EXPRESSION=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_EXPRESSION", Boolean.toString(WHOLEWORDONLY_EXPRESSION)));
-//      WHOLEWORDONLY_PASSAGE=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_PASSAGE", Boolean.toString(WHOLEWORDONLY_PASSAGE)));
-//      WHOLEWORDONLY_FORMULA=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_FORMULA", Boolean.toString(WHOLEWORDONLY_FORMULA)));
-//      WHOLEWORDONLY_NEWENTITY=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_NEWENTITY", Boolean.toString(WHOLEWORDONLY_NEWENTITY)));
-//      WHOLEWORDONLY_EXPRESSIONLESSRELATION=Boolean.parseBoolean(properties.getProperty("WHOLEWORDONLY_EXPRESSIONLESSRELATION", Boolean.toString(WHOLEWORDONLY_EXPRESSIONLESSRELATION)));
-//      CASESENSITIVE_INSTANCE=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_INSTANCE", Boolean.toString(CASESENSITIVE_INSTANCE)));
-//      CASESENSITIVE_SYNONYM=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_SYNONYM", Boolean.toString(CASESENSITIVE_SYNONYM)));
-//      CASESENSITIVE_ACRONYM=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_ACRONYM", Boolean.toString(CASESENSITIVE_ACRONYM)));
-//      CASESENSITIVE_EXPRESSION=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_EXPRESSION", Boolean.toString(CASESENSITIVE_EXPRESSION)));
-//      CASESENSITIVE_PASSAGE=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_PASSAGE", Boolean.toString(CASESENSITIVE_PASSAGE)));
-//      CASESENSITIVE_FORMULA=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_FORMULA", Boolean.toString(CASESENSITIVE_FORMULA)));
-//      CASESENSITIVE_NEWENTITY=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_NEWENTITY", Boolean.toString(CASESENSITIVE_NEWENTITY)));
-//      CASESENSITIVE_EXPRESSIONLESSRELATION=Boolean.parseBoolean(properties.getProperty("CASESENSITIVE_EXPRESSIONLESSRELATION", Boolean.toString(CASESENSITIVE_EXPRESSIONLESSRELATION)));
-
 
             FileInputStream fstream = new FileInputStream(ANNOTATION_PROPERTIES_FILE);
             // Get the object of DataInputStream
