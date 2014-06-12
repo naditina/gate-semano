@@ -77,15 +77,15 @@
   </target>
 
   <target name="javadoc" depends="doc.prepare">
-    <javadoc access="protected"
+    <javadoc access="public"
               destdir="${javadoc.dir}"
               classpathref="classpath"
               Encoding="UTF-8"
-              Use="yes"
-              Windowtitle="GATE PWL API Ontology plugin JavaDoc"
+              Use="no"
+              Windowtitle="GATE Semano plugin JavaDoc"
               docencoding="UTF-8"
               charset="UTF-8"
-              source="1.5"
+              source="1.7"
               breakiterator="true">
       <fileset dir="${src}"/>
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />

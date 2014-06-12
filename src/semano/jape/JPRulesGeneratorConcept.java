@@ -9,8 +9,6 @@ import semano.util.OntologyUtil;
 
 public class JPRulesGeneratorConcept {
 
-    private static final int CRITICAL_LENGTH_PLURAL = 2;
-
     public AnnotationRule createRule(String ontology, String readableClassName,
                                      String entityURI, String type, String searchString, Japelate japelate) {
 
@@ -55,7 +53,7 @@ public class JPRulesGeneratorConcept {
         return result;
     }
 
-    public static String computeLastWord(String clas, String[] concepts,
+    private static String computeLastWord(String clas, String[] concepts,
                                          boolean pluralFormOn) {
       String lastExpression = concepts[concepts.length - 1];
         // is concept in the ontology plural form:
@@ -84,7 +82,7 @@ public class JPRulesGeneratorConcept {
         return lastExpression;
     }
 
-    public static String generateSingularFormFromPlural(String word, String clas) {
+    private static String generateSingularFormFromPlural(String word, String clas) {
         if (word.endsWith("ies")) return word.substring(0, word.length() - 3) + "y";
         if (word.endsWith("sses")) return word.substring(0, word.length() - 2);
         if (word.endsWith("s")) return word.substring(0, word.length() - 1);

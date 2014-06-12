@@ -1,9 +1,9 @@
 package semano.rulestore;
 
-import semano.rulestore.RuleStore.Type;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import semano.rulestore.RuleStore.Type;
 
 
 public class AnnotationRule {
@@ -19,11 +19,18 @@ public class AnnotationRule {
     private static final int RULE_NAME = 0;
     private static final int ONTOLOGY = 1;
     private static final int CLASS = 2;
+    /**
+     * the  number of parameters that are standard and are not included into a rule value list
+     */
     public static final int MINIMUM_PARAMETER_NUMBER = 3;
     private ArrayList<String> parameters = new ArrayList<>();
     private Japelate template;
     private String japelateName;
     private Type type = Type.CONCEPT;
+    
+    /**
+     * the currently maximal ID
+     */
     public static int RULE_ID = 0;
 
     public void addParameter(String parameterValue) {

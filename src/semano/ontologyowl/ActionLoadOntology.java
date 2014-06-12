@@ -15,9 +15,10 @@ package semano.ontologyowl;
 import gate.gui.MainFrame;
 import gate.util.GateRuntimeException;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.Map;
+
+import javax.swing.AbstractAction;
 
 /**
  * Class for carrying out the action of loading an ontology.

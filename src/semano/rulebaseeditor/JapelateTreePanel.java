@@ -7,7 +7,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -18,7 +17,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.tree.TreeSelectionModel;
 
 import semano.ontoviewer.CheckRenderer;
-import semano.rulestore.Japelate;
 
 public class JapelateTreePanel extends JPanel implements TreePanel {
 

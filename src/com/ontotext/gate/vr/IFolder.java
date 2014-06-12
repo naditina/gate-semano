@@ -3,7 +3,8 @@ package com.ontotext.gate.vr;
 /**Additional interface to be impelmented by the nodes of the tree view.
  * @author Miroslav Goranov*/
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 

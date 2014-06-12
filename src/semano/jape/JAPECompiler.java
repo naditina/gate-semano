@@ -16,7 +16,7 @@ import semano.util.FileAndDownloadUtil;
 public class JAPECompiler {
 
   // //// parameters for file paths and generating jape format:
-  public static final String conceptTemplateHeader = "Phase: $phasename$\n"
+  private static final String conceptTemplateHeader = "Phase: $phasename$\n"
           + "Input:  Token Mention Sentence\n"
           + "Options: control = all debug = true\n";
 
@@ -31,20 +31,35 @@ public class JAPECompiler {
           + JAPE;
 
   // // parameters for the ruleStore when called via main:
-  public static final String JAPE_JPRULES_ROOT = "data/jprules/";
+  public static final String JAPE_JPRULES_ROOT = "plugins/Semano/data/jprules/";
 
-  private static final String JAPE_JAPELATES_DIR = "data/japelates/";
+  private static final String JAPE_JAPELATES_DIR = "plugins/Semano/data/japelates/";
 
+  
 
-  public static String convertRuleToJAPEFile(AnnotationRule rule, String filename) {
-    String phasename = RuleStore.getPhasenameForConcept(rule.getClas());
-    FileAndDownloadUtil.writeStringToFile(filename,
-            generateHeader(phasename), true);
-    FileAndDownloadUtil.appendStringToFile(createdJAPERule(rule),
-            filename);
-    return filename;
+  /**
+   * JAVA API method for compiling the entire rule base into JAPE
+   * @param rs ruleStore to be used for compilation
+   * @param japeDirectoryName directory to store jape files
+   * @param multiPhaseFilename filename of the multiphase jape file
+   */
+  public static void convertJP2JAPE(RuleStore rs, String japeDirectoryName, String multiPhaseFilename) {
+    System.out.println("compiling rules to jape");
+    FileAndDownloadUtil.createDirectory(japeDirectoryName, true);
+    FileAndDownloadUtil.writeStringToFile(multiPhaseFilename, MULTIPHASECODE,
+            true);
+    compile(japeDirectoryName, multiPhaseFilename, rs, Type.CONCEPT);
+    compile(japeDirectoryName, multiPhaseFilename, rs, Type.RELATION);
+    System.out.println("done!");
   }
 
+  /**
+   * method used from the CreoleRuleStore to annotate documents
+   * @param rs ruleStore to be used
+   * @param ruleType type of rules (concept, relation)
+   * @param pluginPath path to the plugin (ending with semano?)
+   * @return filename of the main jape file
+   */
   public static String convertJP2JAPE(RuleStore rs, Type ruleType, String pluginPath) {
     System.out.println("compiling rules to jape");
     String directoryName = pluginPath+JAPE_DIRNAME;
@@ -57,17 +72,27 @@ public class JAPECompiler {
     return filenameJAPE;
   }
 
-  public static void convertJP2JAPE(RuleStore rs) {
-    System.out.println("compiling rules to jape");
-    FileAndDownloadUtil.createDirectory(JAPE_DIRNAME, true);
-    FileAndDownloadUtil.writeStringToFile(MULTIPHASEFILENAME, MULTIPHASECODE,
-            true);
-    compile(JAPE_DIRNAME, MULTIPHASEFILENAME, rs, Type.CONCEPT);
-    compile(JAPE_DIRNAME, MULTIPHASEFILENAME, rs, Type.RELATION);
-    System.out.println("done!");
-  }
 
-  public static void compile(String japeTargetDirName,
+
+
+  /**
+   * method used from the CreoleRuleStore to annotate documents with a single rule
+   * @param rule rule to be compiled
+   * @param filename of the JAPE file to be generated
+   * @return filename of the generated JAPE file
+   */
+  public static String convertRuleToJAPEFile(AnnotationRule rule, String filename) {
+    String phasename = RuleStore.getPhasenameForConcept(rule.getClas());
+    FileAndDownloadUtil.writeStringToFile(filename,
+            generateHeader(phasename), true);
+    FileAndDownloadUtil.appendStringToFile(createdJAPERule(rule),
+            filename);
+    return filename;
+  }
+  
+  
+  
+  private static void compile(String japeTargetDirName,
           String multiphaseFilename, RuleStore rs, Type ruleType) {
     System.out.println(ruleType.name() + "...");
     HashMap<String, Set<AnnotationRule>> ruleMap = rs.getRules(ruleType);
@@ -141,14 +166,14 @@ public class JAPECompiler {
     return japeRule;
   }
 
-  static String generateHeader(String phasename) {
+  private static String generateHeader(String phasename) {
     return conceptTemplateHeader.replaceAll("\\$phasename\\$", phasename);
   }
 
   public static void main(String[] args) {
     RuleStore rs = new RuleStore(JAPE_JPRULES_ROOT, JAPE_JAPELATES_DIR);
     rs.init();
-    convertJP2JAPE(rs);
+    convertJP2JAPE(rs,  JAPE_DIRNAME,  MULTIPHASEFILENAME);
   }
 
 }

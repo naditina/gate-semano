@@ -1,7 +1,5 @@
 package semano.rulebaseeditor;
 
-import gate.creole.AbstractVisualResource;
-
 import java.awt.Color;
 import java.util.HashMap;
 

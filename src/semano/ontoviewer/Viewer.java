@@ -1,11 +1,16 @@
 package semano.ontoviewer;
 
-import com.ontotext.gate.vr.OntoTreeModel;
 import gate.creole.ontology.Ontology;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.List;
+
+import com.ontotext.gate.vr.OntoTreeModel;
 
 public interface Viewer {
 

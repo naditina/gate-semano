@@ -259,15 +259,6 @@ public class JAPEAnnotator {
         if(args.length != 1 && args.length != 5){
             System.exit(-1);
         }
-        annotate(args);
-    }
-
-    /**
-     *
-     * Runs AnnotateAllDocuments when numberOfThreads is 1, otherwise runs annotateAllDocumentsParallel
-     * @param args
-     */
-    public static void annotate(String[] args) {
         JAPEAnnotator j = new JAPEAnnotator();
         String rootCorpusDirectory = "plugins/Semano/data/NEW/annotation";
         String saveLocation = "plugins/Semano/data/NEW";

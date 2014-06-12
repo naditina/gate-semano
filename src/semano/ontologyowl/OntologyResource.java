@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
-
 import org.apache.log4j.Logger;
 
 import semano.ontologyowl.impl.OWLOntologyServiceImpl;

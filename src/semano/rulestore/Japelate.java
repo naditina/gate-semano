@@ -1,11 +1,11 @@
 package semano.rulestore;
 
-import semano.util.FileAndDownloadUtil;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import semano.util.FileAndDownloadUtil;
 
 
 public class Japelate {

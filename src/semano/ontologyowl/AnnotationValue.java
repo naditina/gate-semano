@@ -5,16 +5,18 @@ package semano.ontologyowl;
 
 import gate.Factory;
 import gate.FeatureMap;
-import org.apache.log4j.Logger;
-import org.semanticweb.owlapi.model.IRI;
-import semano.ontologyowl.impl.PropertyValue;
-import semano.ontoviewer.OntologyAnnotation;
-import semano.util.Settings;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+import org.semanticweb.owlapi.model.IRI;
+
+import semano.ontologyowl.impl.PropertyValue;
+import semano.ontoviewer.OntologyAnnotation;
+import semano.util.Settings;
 
 /**
  * @author Nadejda Nikitina
@@ -132,7 +134,9 @@ public class AnnotationValue extends PropertyValue {
         if (getValue().isEmpty() || getValue().equals("^^xsd:string")) {
             logger.error("annotation was not parsed correctly: " + completeValue + " became " + getValue());
         }
+        if(value.contains(Settings.ANNOTATION_DELIMITER)){
         //now metadata
+          try{
         value = extractMetadata(value);
         setTime(extractOtherMetadata(value, Settings.TIME_TAG));
         setAuthor(extractOtherMetadata(value, Settings.AUTHOR_TAG));
@@ -144,6 +148,10 @@ public class AnnotationValue extends PropertyValue {
         setSuperconcept(extractOtherMetadata(value, Settings.SUPERCONCEPT_TAG));
         setDomain(extractOtherMetadata(value, Settings.DOMAIN_TAG));
         setRange(extractOtherMetadata(value, Settings.RANGE_TAG));
+          }catch(ArrayIndexOutOfBoundsException e){
+            // format is incorrect, we ignore the metadata
+          }
+        }
 
     }
 

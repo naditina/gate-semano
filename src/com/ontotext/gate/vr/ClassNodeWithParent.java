@@ -3,15 +3,15 @@
  */
 package com.ontotext.gate.vr;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
-
 import gate.creole.gazetteer.MappingNode;
 import gate.creole.ontology.OClass;
 import gate.creole.ontology.OInstance;
 import gate.creole.ontology.OResource;
 import gate.creole.ontology.Ontology;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  * @author naddi

@@ -1,18 +1,40 @@
 package semano.ontologyowl.impl;
 
-import gate.creole.ontology.*;
+import gate.creole.ontology.GateOntologyException;
+import gate.creole.ontology.OClass;
+import gate.creole.ontology.OConstants;
 import gate.creole.ontology.OConstants.Closure;
 import gate.creole.ontology.OConstants.OntologyFormat;
+import gate.creole.ontology.OInstance;
+import gate.creole.ontology.ONodeID;
+import gate.creole.ontology.OURI;
+import gate.creole.ontology.RDFProperty;
+import gate.creole.ontology.URI;
 import gate.util.ClosableIterator;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import semano.ontologyowl.*;
+import semano.ontologyowl.AbstractOWLOntology;
+import semano.ontologyowl.AnnotationValue;
+import semano.ontologyowl.ClosableIteratorImpl;
+import semano.ontologyowl.OURIImpl;
+import semano.ontologyowl.OntologyParser;
 import semano.ontologyowl.Reasoning.Reasoner;
-
-import java.io.*;
-import java.net.URL;
-import java.util.*;
 
 /**
  * OWLAPI based Implementation of the  Ontology Service.

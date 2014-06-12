@@ -1,10 +1,11 @@
 package com.ontotext.gate.vr;
 
-import javax.swing.tree.TreePath;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.*;
-import javax.swing.event.TreeModelEvent;
 import java.util.Vector;
+
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 /**A Tree Model used for the tree view of an ontology.
  * @author Miroslav Goranov*/

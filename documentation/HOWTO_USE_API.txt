@@ -1,0 +1,19 @@
+This file contains examples of using the Java API of Semano. Capital letter variables are paths to the corresponding directories or files described in the Javadoc.
+
+Generate an initial rule base from an ontology:
+Ontology2JPRuleGenerator.generateInitialRuleBase(ONTOLOGYFILENAME,JPRULESDIRECTORY,JAPELATEDIRECTORY);
+
+
+Compile a rule store into jape files:
+RuleStore rs = new RuleStore(JPRULESDIRECTORY, JAPELATEDIRECTORY);
+rs.init();
+JAPECompiler.convertJP2JAPE(rs,  JAPEDIRECTORY,  MULTIPHASEFILENAME);
+
+
+Annotate a document with a rule store:
+JAPEAnnotator j = new JAPEAnnotator();
+j.annotateAllDocuments(useAnnie, new File(CORPUSDIRECTORY), ANNOTATEDDOCFILENAME, MULTIPHASEFILENAME, threadNumber);
+
+
+
+Updating and accessing a rule store (class semano.rulestore.RuleStore) is documented in the javadoc.

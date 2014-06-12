@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * this class is being used by the Creole plugin for annotating documents with a rule base
  * @author nadeschda
  */
 public class RuleStoreAnnotator {

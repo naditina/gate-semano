@@ -22,14 +22,15 @@ import gate.creole.metadata.Optional;
 import gate.creole.ontology.OConstants;
 import gate.creole.ontology.OConstants.OntologyFormat;
 import gate.creole.ontology.OntologyTripleStore;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-
-import semano.ontologyowl.impl.OWLOntologyServiceImpl;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+
+import semano.ontologyowl.impl.OWLOntologyServiceImpl;
 
 
 /**

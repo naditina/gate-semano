@@ -1,19 +1,24 @@
 package semano.util;
 
-import org.apache.log4j.Logger;
-import semano.ontoviewer.AnnotationMetaData;
-
 import gate.Gate;
 
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
+import semano.ontoviewer.AnnotationMetaData;
+
 public class Settings {
     private static Logger logger = Logger.getLogger(Settings.class);
-    private static String PROPERTIES_FILE = "ontologyBasedAnnotation.properties";
+    private static String PROPERTIES_FILE = "ontologybasedannotation.properties";
     private static final String ANNOTATION_PROPERTIES_FILE = "annotationproperties.properties";
 
 
@@ -147,14 +152,15 @@ public class Settings {
 
         try {
             logger.info("Reading properties");
-            String pluginPath="";
+            String pluginPath="plugins/Semano/";
+            if(Gate.getGateHome()!=null){
               File pluginDir = new File(Gate.getGateHome().toString()+"/plugins/Semano/");
               pluginPath = pluginDir.getAbsoluteFile().toURI().toURL().toString();      
               if(pluginPath!=null ){
                 pluginPath=pluginPath.substring(5, pluginPath.length());
-                System.out.println("plugin directory: "+pluginPath);       
               }
-            
+            }
+            System.out.println("plugin directory: "+pluginPath);                   
             FileInputStream inStream = new FileInputStream(pluginPath+PROPERTIES_FILE);
             Properties properties = new Properties();
             properties.load(inStream);
@@ -230,7 +236,7 @@ public class Settings {
             DEBUG = Boolean.parseBoolean(properties.getProperty("DEBUG", Boolean.toString(DEBUG)));
             EVALUATION = Boolean.parseBoolean(properties.getProperty("EVALUATION", Boolean.toString(EVALUATION)));
 
-            FileInputStream fstream = new FileInputStream(ANNOTATION_PROPERTIES_FILE);
+            FileInputStream fstream = new FileInputStream(pluginPath+ANNOTATION_PROPERTIES_FILE);
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));

@@ -11,7 +11,6 @@ import java.awt.DisplayMode;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -23,7 +22,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -36,13 +34,11 @@ import javax.swing.JTable;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
 import semano.ontologyowl.AnnotationValue;
 import semano.ontologyowl.impl.OWLOntology;
-
 
 import com.ontotext.gate.vr.ClassNode;
 

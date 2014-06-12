@@ -1,16 +1,16 @@
 package semano.rulebaseeditor;
 
 import gate.creole.ontology.InvalidURIException;
-import semano.ontologyowl.ONodeIDImpl;
-import semano.ontologyowl.OURIImpl;
-import semano.ontoviewer.Viewer;
-import semano.rulestore.AnnotationRule;
-import semano.rulestore.Japelate;
-import semano.rulestore.RuleStore.Type;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.FontMetrics;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,6 +19,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+
+import semano.ontologyowl.ONodeIDImpl;
+import semano.ontologyowl.OURIImpl;
+import semano.ontoviewer.Viewer;
+import semano.rulestore.AnnotationRule;
+import semano.rulestore.Japelate;
+import semano.rulestore.RuleStore.Type;
 
 /**
  * @author Nadejda Nikitina

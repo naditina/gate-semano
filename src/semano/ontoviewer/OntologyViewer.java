@@ -7,7 +7,6 @@ import gate.Gate;
 import gate.LanguageResource;
 import gate.ProcessingResource;
 import gate.Resource;
-import gate.SimpleAnnotationSet;
 import gate.creole.ontology.OClass;
 import gate.creole.ontology.OConstants;
 import gate.creole.ontology.OInstance;

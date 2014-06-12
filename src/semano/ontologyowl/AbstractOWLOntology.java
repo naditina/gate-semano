@@ -12,18 +12,32 @@
  */
 package semano.ontologyowl;
 
-import gate.creole.ontology.*;
+import gate.creole.ontology.GateOntologyException;
+import gate.creole.ontology.OBNodeID;
+import gate.creole.ontology.OConstants;
 import gate.creole.ontology.OConstants.OntologyFormat;
 import gate.creole.ontology.OConstants.QueryLanguage;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import semano.ontologyowl.impl.OWLOntology;
-import semano.ontologyowl.impl.OWLOntologyServiceImpl;
-import semano.ontologyowl.impl.Utils;
+import gate.creole.ontology.OURI;
+import gate.creole.ontology.OntologyBooleanQuery;
+import gate.creole.ontology.OntologyTupleQuery;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+
+import semano.ontologyowl.impl.OWLOntology;
+import semano.ontologyowl.impl.OWLOntologyServiceImpl;
+import semano.ontologyowl.impl.Utils;
 
 
 /**

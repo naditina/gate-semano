@@ -1,7 +1,11 @@
 package semano.jape;
 
 import gate.creole.ontology.ONodeID;
+
+import java.io.FileNotFoundException;
+
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+
 import semano.ontologyowl.AnnotationValue;
 import semano.ontologyowl.OntologyParser;
 import semano.ontologyowl.impl.Property;
@@ -14,38 +18,34 @@ import semano.rulestore.RuleStore;
 import semano.rulestore.RuleStore.Type;
 import semano.util.FileAndDownloadUtil;
 import semano.util.OntologyUtil;
-import semano.util.Settings;
-
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Ontology2JPRuleGenerator {
 
-    private static Set<String> ontologies = new HashSet<>();
-    private static final String DIRNAME = "plugins/Semano/data/Ontologien-49c/";
-    static final int CRITICAL_LENGTH = 1;
-    private String jpRulesDirectory = "plugins/Semano/data/jprules/";
-    private String japelateDirectory = "plugins/Semano/data/japelates/";
+  static final int CRITICAL_LENGTH = 1;
+    private static final String ONTOLOGYFILENAME = "plugins/Semano/data/mergedNanOnOntologyRDF.owl";
+    private static String JPRULESDIRECTORY = "plugins/Semano/data/jprules/";
+    private static String JAPELATEDIRECTORY = "plugins/Semano/data/japelates/";
 
-    static {
-        ontologies.add(DIRNAME + "mergedNanOnOntologyRDF.owl");
-    }
 
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-//        if(args.length )
-        new Ontology2JPRuleGenerator().run();
+        Ontology2JPRuleGenerator.generateInitialRuleBase(ONTOLOGYFILENAME,JPRULESDIRECTORY,JAPELATEDIRECTORY);
     }
 
 
-    private void run() {
+    /**
+     * method generating a simple rule base from an ontology
+     * @param ontologyFileName  name of the ontology file
+     * @param jpRulesDirectory name of the directory for storing JP rules
+     * @param japelateDirectory name of the directory containing japelates
+     */
+    public static void generateInitialRuleBase(String ontologyFileName, String jpRulesDirectory, String japelateDirectory) {
         OntologyParser op = new OntologyParser();
         try{
-            op.loadOntologies(ontologies, DIRNAME);
+            op.loadOntology(ontologyFileName);
         } catch (OWLOntologyCreationException |FileNotFoundException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -61,7 +61,7 @@ public class Ontology2JPRuleGenerator {
         ruleStore.saveRules(Type.RELATION);
     }
 
-    public void exportConcepts(OntologyParser op, RuleStore ruleStore) {
+    private static void exportConcepts(OntologyParser op, RuleStore ruleStore) {
         Japelate j = ruleStore.getJapelate("label");
         JPRulesGeneratorConcept japeGenerator = new JPRulesGeneratorConcept();
         for (ONodeID cl : op.getClasses()) {
@@ -72,13 +72,12 @@ public class Ontology2JPRuleGenerator {
                 // generating rule from concept name:
                 String searchString =
                         OntologyUtil.convertToValidLabel(cl.getResourceName());
-                AnnotationMetaData type =
-                        OntologyAnnotation.getPropertyForTypeEnum(Settings.SYNONYM);
+                
                 // call the generator
                 AnnotationRule rule =
                         japeGenerator.createRule(ontology, clas,
                                 cl.getNameSpace() + cl.getResourceName(),
-                                type.getEnumName(), searchString, j);
+                                "SYNONYM", searchString, j);
                 ruleStore.addRule(rule, Type.CONCEPT);
 
 
@@ -86,9 +85,8 @@ public class Ontology2JPRuleGenerator {
                 for (AnnotationValue annotationValue : op.getAnnotationPropertyValues(cl
                         .toString())) {
                     searchString = annotationValue.getValue();
-                    type =
-                            OntologyAnnotation.getPropertyForTypeUri(annotationValue
-                                    .getAnnotationProperty());
+                    AnnotationMetaData type = OntologyAnnotation.getPropertyForTypeUri(annotationValue
+                            .getAnnotationProperty());
                     if (!annotationValue.isAntiPattern() && type != null
                             && type.isAutoannotate() && searchString != null
                             && searchString.length() > CRITICAL_LENGTH) {
@@ -108,7 +106,7 @@ public class Ontology2JPRuleGenerator {
 
     }
 
-    public void exportRelations(OntologyParser op, RuleStore ruleStore) {
+    private static void exportRelations(OntologyParser op, RuleStore ruleStore) {
         for (Property property : op.getObjectProperties()) {
             for (AnnotationValue annotationValue : op
                     .getAnnotationPropertyValues(property.getUri())) {
