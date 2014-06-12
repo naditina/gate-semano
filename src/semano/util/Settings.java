@@ -236,6 +236,7 @@ public class Settings {
             DEBUG = Boolean.parseBoolean(properties.getProperty("DEBUG", Boolean.toString(DEBUG)));
             EVALUATION = Boolean.parseBoolean(properties.getProperty("EVALUATION", Boolean.toString(EVALUATION)));
 
+            System.out.println("loading annotation properties from "+pluginPath+ANNOTATION_PROPERTIES_FILE);
             FileInputStream fstream = new FileInputStream(pluginPath+ANNOTATION_PROPERTIES_FILE);
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
