@@ -18,6 +18,11 @@ import javax.swing.tree.TreeSelectionModel;
 
 import semano.ontoviewer.CheckRenderer;
 
+/**
+ * A GUI component showing a list of japelates used on the right-hand side within the rule base editor.
+ * @author nadeschda
+ *
+ */
 public class JapelateTreePanel extends JPanel implements TreePanel {
 
   private HashMap<String, Boolean> currentJapelateSelection = new HashMap<>();

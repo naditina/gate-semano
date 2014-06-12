@@ -41,6 +41,7 @@ import semano.rulestore.Japelate;
 import semano.rulestore.RuleStore.Type;
 
 /**
+ * editor GUI for creating/updating an annotation rule
  * @author Nadejda Nikitina
  * 
  */
@@ -284,7 +285,7 @@ public class AnnotationRuleEditor extends AbstractAction {
         } else {
           System.out.println("updating rule");
           rule.setJapelate(selectedJapelate);
-          rule.setClas(params.get(2));
+          rule.setEntityIRIClas(params.get(2));
           rule.setOntology(ontology);
           for(int i = AnnotationRule.MINIMUM_PARAMETER_NUMBER; i < params.size(); i++) {
             if(rule.getParameters().size() <= i)

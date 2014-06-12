@@ -11,8 +11,15 @@ import semano.rulestore.Japelate;
 import semano.rulestore.Parameter;
 import semano.rulestore.RuleStore;
 import semano.rulestore.RuleStore.Type;
-import semano.util.FileAndDownloadUtil;
+import semano.util.FileAndDatastructureUtil;
 
+/**
+ * This class compiles a semano rule store into a set of JAPE files that
+ * can be loaded by a GATE transducer.
+ * 
+ * @author nadeschda
+ * 
+ */
 public class JAPECompiler {
 
   // //// parameters for file paths and generating jape format:
@@ -33,21 +40,22 @@ public class JAPECompiler {
   // // parameters for the ruleStore when called via main:
   public static final String JAPE_JPRULES_ROOT = "plugins/Semano/data/jprules/";
 
-  private static final String JAPE_JAPELATES_DIR = "plugins/Semano/data/japelates/";
-
-  
+  private static final String JAPE_JAPELATES_DIR =
+          "plugins/Semano/data/japelates/";
 
   /**
    * JAVA API method for compiling the entire rule base into JAPE
+   * 
    * @param rs ruleStore to be used for compilation
    * @param japeDirectoryName directory to store jape files
    * @param multiPhaseFilename filename of the multiphase jape file
    */
-  public static void convertJP2JAPE(RuleStore rs, String japeDirectoryName, String multiPhaseFilename) {
+  public static void convertJP2JAPE(RuleStore rs, String japeDirectoryName,
+          String multiPhaseFilename) {
     System.out.println("compiling rules to jape");
-    FileAndDownloadUtil.createDirectory(japeDirectoryName, true);
-    FileAndDownloadUtil.writeStringToFile(multiPhaseFilename, MULTIPHASECODE,
-            true);
+    FileAndDatastructureUtil.createDirectory(japeDirectoryName, true);
+    FileAndDatastructureUtil.writeStringToFile(multiPhaseFilename,
+            MULTIPHASECODE, true);
     compile(japeDirectoryName, multiPhaseFilename, rs, Type.CONCEPT);
     compile(japeDirectoryName, multiPhaseFilename, rs, Type.RELATION);
     System.out.println("done!");
@@ -55,43 +63,43 @@ public class JAPECompiler {
 
   /**
    * method used from the CreoleRuleStore to annotate documents
+   * 
    * @param rs ruleStore to be used
    * @param ruleType type of rules (concept, relation)
    * @param pluginPath path to the plugin (ending with semano?)
    * @return filename of the main jape file
    */
-  public static String convertJP2JAPE(RuleStore rs, Type ruleType, String pluginPath) {
+  public static String convertJP2JAPE(RuleStore rs, Type ruleType,
+          String pluginPath) {
     System.out.println("compiling rules to jape");
-    String directoryName = pluginPath+JAPE_DIRNAME;
-    FileAndDownloadUtil.createDirectory(directoryName, true);
-    String filenameJAPE = pluginPath+MULTIPHASEFILENAME;
-    FileAndDownloadUtil.writeStringToFile(filenameJAPE, MULTIPHASECODE,
+    String directoryName = pluginPath + JAPE_DIRNAME;
+    FileAndDatastructureUtil.createDirectory(directoryName, true);
+    String filenameJAPE = pluginPath + MULTIPHASEFILENAME;
+    FileAndDatastructureUtil.writeStringToFile(filenameJAPE, MULTIPHASECODE,
             true);
     compile(directoryName, filenameJAPE, rs, ruleType);
     System.out.println("done!");
     return filenameJAPE;
   }
 
-
-
-
   /**
-   * method used from the CreoleRuleStore to annotate documents with a single rule
+   * method used from the CreoleRuleStore to annotate documents with a
+   * single rule
+   * 
    * @param rule rule to be compiled
    * @param filename of the JAPE file to be generated
    * @return filename of the generated JAPE file
    */
-  public static String convertRuleToJAPEFile(AnnotationRule rule, String filename) {
-    String phasename = RuleStore.getPhasenameForConcept(rule.getClas());
-    FileAndDownloadUtil.writeStringToFile(filename,
+  public static String convertRuleToJAPEFile(AnnotationRule rule,
+          String filename) {
+    String phasename = RuleStore.getPhasenameForConcept(rule.getEntityIRI());
+    FileAndDatastructureUtil.writeStringToFile(filename,
             generateHeader(phasename), true);
-    FileAndDownloadUtil.appendStringToFile(createdJAPERule(rule),
-            filename);
+    FileAndDatastructureUtil
+            .appendStringToFile(createdJAPERule(rule), filename);
     return filename;
   }
-  
-  
-  
+
   private static void compile(String japeTargetDirName,
           String multiphaseFilename, RuleStore rs, Type ruleType) {
     System.out.println(ruleType.name() + "...");
@@ -107,10 +115,10 @@ public class JAPECompiler {
           Set<AnnotationRule> rules, String japeLocation,
           String multiphaseFilename) {
     String fname = japeLocation + phasename + JAPE;
-    FileAndDownloadUtil.appendStringToFile(phasename, multiphaseFilename);
-    FileAndDownloadUtil.writeStringToFile(fname, generateHeader(phasename),
-            true);
-    FileAndDownloadUtil.appendStringsToFile(generateJAPE(rules), fname);
+    FileAndDatastructureUtil.appendStringToFile(phasename, multiphaseFilename);
+    FileAndDatastructureUtil.writeStringToFile(fname,
+            generateHeader(phasename), true);
+    FileAndDatastructureUtil.appendStringsToFile(generateJAPE(rules), fname);
 
   }
 
@@ -125,7 +133,9 @@ public class JAPECompiler {
   }
 
   /**
-   * this method replaces parameter placeholders within japelates by actual values from rules
+   * this method replaces parameter placeholders within japelates by
+   * actual values from rules
+   * 
    * @param JP rule
    * @return JAPE rule as String
    */
@@ -135,14 +145,14 @@ public class JAPECompiler {
     int lastParameterPosition = japelate.getParamList().size() - 1;
 
     for(int i = 0; i < lastParameterPosition; i++) {
-      String replacement = rule.getParameters()
-              .get(i);
-      // if the parameter is an ontology entity, we need to remove all spaces around the URI
-      //otherwise it wont annotate relations
-      if(japelate.getParamList().get(i).getType().equals(Parameter.TYPE.ONTOLOGY_ENTITY))
-        replacement=replacement.trim();
-      japeRule =
-              japeRule.replaceAll("\\$" + i + "\\$", replacement);
+      String replacement = rule.getParameters().get(i);
+      // if the parameter is an ontology entity, we need to remove all
+      // spaces around the URI
+      // otherwise it wont annotate relations
+      if(japelate.getParamList().get(i).getType()
+              .equals(Parameter.ParameterType.ONTOLOGY_ENTITY))
+        replacement = replacement.trim();
+      japeRule = japeRule.replaceAll("\\$" + i + "\\$", replacement);
     }
     int start = japeRule.indexOf("${") + 1;
     int end = japeRule.indexOf("}$") + 1;
@@ -173,7 +183,7 @@ public class JAPECompiler {
   public static void main(String[] args) {
     RuleStore rs = new RuleStore(JAPE_JPRULES_ROOT, JAPE_JAPELATES_DIR);
     rs.init();
-    convertJP2JAPE(rs,  JAPE_DIRNAME,  MULTIPHASEFILENAME);
+    convertJP2JAPE(rs, JAPE_DIRNAME, MULTIPHASEFILENAME);
   }
 
 }

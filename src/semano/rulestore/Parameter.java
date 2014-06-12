@@ -1,53 +1,61 @@
 package semano.rulestore;
 
 /**
- * Store parameter information.
+ * This class stores parameter information for japelates (each entry in
+ * the japelate header is a parameter).
+ * 
+ * @author nadeschda
  */
 public class Parameter {
 
-    public enum TYPE {
-        ONTOLOGY_ENTITY,
-        LITERAL
+  /**
+   * Type of japelate parameter (ontology entity or literal)
+   * @author nadeschda
+   *
+   */
+  public enum ParameterType {
+    ONTOLOGY_ENTITY, LITERAL
+  }
+
+  /**
+   * number of the rule.
+   */
+  private String name;
+
+  private String description;
+
+  private ParameterType type;
+
+  public Parameter(String name, String type, String description) {
+    this.name = name;
+
+    switch(type) {
+      case "LITERAL":
+        this.type = ParameterType.LITERAL;
+        break;
+      case "ONTOLOGY_ENTITY":
+        this.type = ParameterType.ONTOLOGY_ENTITY;
+        break;
+      default:
+        this.type = null;
+
     }
+    this.description = description;
+  }
 
-    /**
-     * number of the rule.
-     */
-    private String name;
-    private String description;
-    private TYPE type;
+  public ParameterType getType() {
+    return type;
+  }
 
+  public String getDescription() {
+    return description;
+  }
 
-    public Parameter(String name, String type, String description) {
-        this.name = name;
+  public String getName() {
+    return name;
+  }
 
-        switch(type){
-            case "LITERAL" :
-                this.type = TYPE.LITERAL;
-                break;
-            case "ONTOLOGY_ENTITY" :
-                this.type = TYPE.ONTOLOGY_ENTITY;
-                break;
-            default :
-                this.type = null;
-
-        }
-        this.description = description;
-    }
-
-    public TYPE getType() {
-        return type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

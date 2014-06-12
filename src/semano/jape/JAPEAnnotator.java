@@ -28,9 +28,14 @@ import java.util.Calendar;
 
 import javax.xml.stream.XMLStreamException;
 
-import semano.util.FileAndDownloadUtil;
+import semano.util.FileAndDatastructureUtil;
 
 
+/**
+ * This class annotates documents with a rule base and an ontology
+ * @author nadeschda
+ *
+ */
 public class JAPEAnnotator {
 
     private static final String logFileName = "plugins/Semano/data/annotationlog.txt";
@@ -161,7 +166,7 @@ public class JAPEAnnotator {
         );
         if (filesInFolder != null && filesInFolder.length > 0) {
 
-            FileAndDownloadUtil.appendStringToFile("Starting annotation with thread " + threadNumber +" "+ now(), logFileName);
+            FileAndDatastructureUtil.appendStringToFile("Starting annotation with thread " + threadNumber +" "+ now(), logFileName);
             Gate.init();
 
             Transducer japeTransducer = null;
@@ -192,7 +197,7 @@ public class JAPEAnnotator {
                 japeTransducer = initilalizeTransducer(multiphaseJape,o);
 
             }
-            FileAndDownloadUtil.appendStringToFile("init finished " +
+            FileAndDatastructureUtil.appendStringToFile("init finished " +
                     now(), logFileName);
             System.out.println("init finished " + now());
 
@@ -202,7 +207,7 @@ public class JAPEAnnotator {
                     else
                         annotateDocument(f, saveLocation, japeTransducer);
 
-                    FileAndDownloadUtil.appendStringToFile("finished document with thread " + threadNumber +
+                    FileAndDatastructureUtil.appendStringToFile("finished document with thread " + threadNumber +
                             now(), logFileName);
                     System.out.println("finished document with thread " + threadNumber +
                             now());
@@ -210,7 +215,7 @@ public class JAPEAnnotator {
 //                f.delete();
 
             }
-            FileAndDownloadUtil.appendStringToFile(" annotation with thread " + threadNumber + " finished. " + now(), logFileName);
+            FileAndDatastructureUtil.appendStringToFile(" annotation with thread " + threadNumber + " finished. " + now(), logFileName);
         }
     }
 

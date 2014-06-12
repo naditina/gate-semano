@@ -25,6 +25,11 @@ import javax.swing.table.TableColumnModel;
 import semano.ontoviewer.Viewer;
 import semano.rulestore.Parameter;
 
+/**
+ * A GUI component showing the table of japelate parameters with values.
+ * @author nadeschda
+ *
+ */
 public class ParameterTable extends JPanel {
 
   JTable mainTable = new JTable();
@@ -148,7 +153,7 @@ public class ParameterTable extends JPanel {
           if(row >= 0 && editorCombo.getSelectedItem() != null) {
             String newValue = editorCombo.getSelectedItem().toString();
             if(japelateParams.get(row).getType()
-                    .equals(Parameter.TYPE.ONTOLOGY_ENTITY)) {
+                    .equals(Parameter.ParameterType.ONTOLOGY_ENTITY)) {
               newValue = viewer.getOntologyEntities().get(editorCombo.getSelectedIndex());
             }
             paramValues.set(row, newValue);
@@ -189,7 +194,7 @@ public class ParameterTable extends JPanel {
         combo.setEnabled(false);
         return;
       } else if(japelateParams.get(row).getType()
-              .equals(Parameter.TYPE.ONTOLOGY_ENTITY)) {
+              .equals(Parameter.ParameterType.ONTOLOGY_ENTITY)) {
         combo.setEditable(false);
 
         if(!viewer.getOntologyEntities().contains(paramValues.get(row))

@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import semano.util.FileAndDownloadUtil;
+import semano.util.FileAndDatastructureUtil;
 
 
+/**
+ * This class represents  japelates and abstract japelate instantiations.
+ * @author nadeschda
+ *
+ */
 public class Japelate {
 
     protected String name;
@@ -18,26 +23,44 @@ public class Japelate {
     protected File japelateFile;
 
     //list of numbers
+    
+    /**
+     * @return the parameter list
+     */
     public List<Parameter> getParamList() {
         return paramList;
     }
 
+    /**
+     * @return the name of the japelate
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the body of the japelate used for generating JAPE rules from semano rules
+     */
     public String getJapelateBody() {
         return japelateBody;
     }
 
+    /**
+     * constructor used by the rules store to load japelates from files
+     * @param name japelate name
+     * @param japelateFile the name of the file
+     */
     public Japelate(String name, File japelateFile) {
         this.name = name;
         this.japelateFile = japelateFile;
     }
 
 
-    public void parseJapelate() {
-        ArrayList<String> linesOfJapelate = FileAndDownloadUtil.readStringsFromFile(japelateFile);
+    /**
+     * used by the rule store to load japelate from file
+     */
+    protected void parseJapelate() {
+        ArrayList<String> linesOfJapelate = FileAndDatastructureUtil.readStringsFromFile(japelateFile);
         Iterator<String> it = linesOfJapelate.iterator();
         while (it.hasNext()) {
             String line = it.next();
@@ -79,6 +102,10 @@ public class Japelate {
 
     }
 
+    /**
+     * tests whether this is an abstract japelate instantiation
+     * @return true if this is an abstract japelate instantiation
+     */
     public boolean isAbstract(){
         return this.isAbstract;
     }

@@ -66,10 +66,12 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.TreePath;
 
+import org.xhtmlrenderer.util.GeneralUtil;
+
 import semano.rulebaseeditor.AnnotationRuleEditor;
 import semano.rulebaseeditor.TreePanel;
 import semano.rulestore.AnnotationRule;
-import semano.util.GeneralUtil;
+import semano.util.FileAndDatastructureUtil;
 import semano.util.OntologyUtil;
 import semano.util.Settings;
 
@@ -770,7 +772,7 @@ public class AnnotationEditor extends AbstractAction {
         }
       }
       ArrayList<ArrayList<String>> sortedList =
-              GeneralUtil.sortHashMapByKeys(annotationStringsToSort, true);
+              FileAndDatastructureUtil.sortHashMapByKeys(annotationStringsToSort, true);
       for(ArrayList<String> res : sortedList) {
         result.addAll(res);
       }

@@ -29,12 +29,14 @@ import semano.rulestore.Japelate;
 import semano.rulestore.RuleStore;
 import semano.rulestore.RuleStore.Type;
 
+/**
+ * this is a GATE plugin wrapper of the semano rule store. not to be used within the Java API.
+ * @author nadeschda
+ *
+ */
 @CreoleResource(name = "Semano Rule Store", interfaceName = "gate.ProcessingResource", comment = "Rule base store created as a temporary in-memory repository", helpURL = "http://gate.ac.uk/userguide/sec:ontologies:ontoplugin:owlim")
 public class CreoleRuleStore implements ProcessingResource {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = 17598867348967L;
 
   // GUI viewer reference:

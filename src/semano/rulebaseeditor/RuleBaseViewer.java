@@ -67,8 +67,7 @@ import com.ontotext.gate.vr.IFolder;
 import com.ontotext.gate.vr.OntoTreeModel;
 
 /**
- * the basic structure of the ontology viewer manages the selection of
- * the ontology for annotation if there several ontology sets
+ * the main GUI of the annotation rule editor. Shows a list of all rules and filters.
  * 
  * @author Nadejda Nikitina
  */
@@ -106,10 +105,6 @@ public class RuleBaseViewer extends AbstractVisualResource implements
 
   /** Main panel which holds all different components */
   private JPanel mainPanel;
-
-  /**
-   * RESOURCES...
-   */
 
   java.net.URL editURL;
 
@@ -151,149 +146,12 @@ public class RuleBaseViewer extends AbstractVisualResource implements
       deleteURL= new File(pluginPath+"delete.gif").toURI().toURL();
       System.out.println("loading icons from "+editURL.toString());
     } catch(MalformedURLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      //this should never be reached!
+      System.err.println("icons not found!");
     }
   }
 
-  public int getX() {
-    return table.getX();
-
-  }
-
-  private void loadTableModel(Collection<AnnotationRule> rules) {
-    String[] columnNames =
-            {"", "", "Rule Name", "Japelate", "Parameters", "Entity Name",
-                "Ontology"};
-    ArrayList<Object[]> data = new ArrayList<Object[]>();
-    for(AnnotationRule annotationRule : rules) {
-      Japelate japelate = annotationRule.getJapelate();
-      if(japelate != null) {
-        String japelateName = japelate.getName();
-        String entity = new ONodeIDImpl(annotationRule.getClas(), false)
-        .getResourceName();
-        if(japelateSelectionMap != null
-                && japelateSelectionMap.containsKey(japelateName)
-                && japelateSelectionMap.get(japelateName)) {
-          if(entitySelectionMap!=null && entitySelectionMap.containsKey(entity) && 
-                  entitySelectionMap.get(entity)){
-          // JButton editB = new JButton("edit");
-          String paramListHTML = formatParameterList(annotationRule);
-
-          ImageIcon editIcon = null;
-          if(editURL != null) {
-            editIcon = new ImageIcon(editURL);
-          }
-          JButton editB =
-                  (editIcon != null) ? new JButton(editIcon) : new JButton(
-                          "edit");
-          editB.setBorder(null);
-          editB.addActionListener(new EditAction());
-
-          ImageIcon deleteIcon = null;
-          if(deleteURL != null) {
-            deleteIcon = new ImageIcon(deleteURL);
-          }
-          JButton deleteB =
-                  (deleteIcon != null) ? new JButton(deleteIcon) : new JButton(
-                          "delete");
-          deleteB.setBorder(null);
-          deleteB.addActionListener(new DeleteAction());
-          Object[] row =
-                  {
-                      editB,
-                      deleteB,
-                      annotationRule.getName(),
-                      japelateName,
-                      paramListHTML,
-                      entity, annotationRule.getOntology()};
-
-          data.add(row);
-        }
-        } 
-      }
-    }
-
-    ruleTableModel =
-            new DefaultTableModel(data.toArray(new Object[][] {}), columnNames) {
-
-              private static final long serialVersionUID = 1L;
-
-              @Override
-              public boolean isCellEditable(int row, int column) {
-                return false;
-              }
-            };
-
-    table.setModel(ruleTableModel);
-    table.getColumnModel().getColumn(0).setMaxWidth(40);
-    table.getColumnModel().getColumn(1).setMaxWidth(40);
-    table.getColumnModel().getColumn(2).setMaxWidth(100);
-    table.getColumnModel().getColumn(2).setPreferredWidth(100);
-    table.getColumnModel().getColumn(3).setMaxWidth(200);
-    table.getColumnModel().getColumn(3).setPreferredWidth(200);
-    table.getColumnModel().getColumn(4).setMaxWidth(500);
-    table.getColumnModel().getColumn(4).setPreferredWidth(500);
-    table.getColumnModel().getColumn(5).setMaxWidth(300);
-    table.getColumnModel().getColumn(5).setPreferredWidth(250);
-    table.getColumnModel().getColumn(6).setPreferredWidth(50);
-    TableRowSorter<TableModel> rowSorter =
-            new TableRowSorter<TableModel>(ruleTableModel);
-    // rowSorter.setComparator(2,new AlphaNumericComparator(true));
-    table.setRowSorter(rowSorter);
-  }
-
-  private String formatParameterList(AnnotationRule annotationRule) {
-    StringBuilder paramListHTML = new StringBuilder();
-    paramListHTML.append("<html>");
-    List<Parameter> paramsJapelate =
-            annotationRule.getJapelate().getParamList();
-    List<String> paramsRule = annotationRule.getParameters();
-    if(paramsRule.size() >= paramsJapelate.size()) {
-      // start at 2 to avoid ontology and rule name printing
-      // again....
-      for(int i = AnnotationRule.MINIMUM_PARAMETER_NUMBER; i < paramsJapelate.size(); i++) {
-        String separator = "";
-        if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
-        Parameter paramJ = paramsJapelate.get(i);
-        String paramR = paramsRule.get(i);
-        formatParameterPair(paramListHTML, separator, paramJ, paramR);
-      }
-      if(paramsRule.size() > paramsJapelate.size()){
-        for(int i = paramsJapelate.size(); i < paramsRule.size(); i++) {
-          String separator = "";
-          if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
-          Parameter paramJ = paramsJapelate.get(paramsJapelate.size()-1);
-          String paramR = paramsRule.get(i);
-          formatParameterPair(paramListHTML, separator, paramJ, paramR);
-        }
-      }
-    } else {
-      System.err.println("too few parameters for japelate "
-              + annotationRule.getJapelate().getName() + " in rule "
-              + annotationRule.getName());
-    }
-    paramListHTML.append("</html>");
-    return paramListHTML.toString();
-
-  }
-
-  public void formatParameterPair(StringBuilder paramListHTML,
-          String separator, Parameter paramJ, String paramR) {
-    if(paramR.trim().equals("")) paramR = "EMPTY";
-    switch(paramJ.getType()) {
-      case LITERAL:
-        paramListHTML.append("<font color='blue'>" + paramR + "</font>"
-                + separator);
-        break;
-      case ONTOLOGY_ENTITY:
-        paramListHTML.append("<font color='red'>"
-                + (new ONodeIDImpl(paramR, false)).getResourceName()
-                + "</font>" + separator);
-        break;
-    }
-  }
-
+  
   /** Initialises the GUI */
   public void initGUI() {
     mainPanel = new JPanel();
@@ -384,6 +242,13 @@ public class RuleBaseViewer extends AbstractVisualResource implements
   public Component getGUI() {
     return table;
   }
+  
+
+  public int getX() {
+    return table.getX();
+
+  }
+
 
   /**
    * Releases all resources and listeners
@@ -660,5 +525,154 @@ public class RuleBaseViewer extends AbstractVisualResource implements
     refleshRuleTable();   
     
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  ////////
+  
+  // helper methods for table
+  
+  ////////////
+  
+  
+  
+  private void loadTableModel(Collection<AnnotationRule> rules) {
+    String[] columnNames =
+            {"", "", "Rule Name", "Japelate", "Parameters", "Entity Name",
+                "Ontology"};
+    ArrayList<Object[]> data = new ArrayList<Object[]>();
+    for(AnnotationRule annotationRule : rules) {
+      Japelate japelate = annotationRule.getJapelate();
+      if(japelate != null) {
+        String japelateName = japelate.getName();
+        String entity = new ONodeIDImpl(annotationRule.getEntityIRI(), false)
+        .getResourceName();
+        if(japelateSelectionMap != null
+                && japelateSelectionMap.containsKey(japelateName)
+                && japelateSelectionMap.get(japelateName)) {
+          if(entitySelectionMap!=null && entitySelectionMap.containsKey(entity) && 
+                  entitySelectionMap.get(entity)){
+          // JButton editB = new JButton("edit");
+          String paramListHTML = formatParameterList(annotationRule);
+
+          ImageIcon editIcon = null;
+          if(editURL != null) {
+            editIcon = new ImageIcon(editURL);
+          }
+          JButton editB =
+                  (editIcon != null) ? new JButton(editIcon) : new JButton(
+                          "edit");
+          editB.setBorder(null);
+          editB.addActionListener(new EditAction());
+
+          ImageIcon deleteIcon = null;
+          if(deleteURL != null) {
+            deleteIcon = new ImageIcon(deleteURL);
+          }
+          JButton deleteB =
+                  (deleteIcon != null) ? new JButton(deleteIcon) : new JButton(
+                          "delete");
+          deleteB.setBorder(null);
+          deleteB.addActionListener(new DeleteAction());
+          Object[] row =
+                  {
+                      editB,
+                      deleteB,
+                      annotationRule.getName(),
+                      japelateName,
+                      paramListHTML,
+                      entity, annotationRule.getOntology()};
+
+          data.add(row);
+        }
+        } 
+      }
+    }
+
+    ruleTableModel =
+            new DefaultTableModel(data.toArray(new Object[][] {}), columnNames) {
+
+              private static final long serialVersionUID = 1L;
+
+              @Override
+              public boolean isCellEditable(int row, int column) {
+                return false;
+              }
+            };
+
+    table.setModel(ruleTableModel);
+    table.getColumnModel().getColumn(0).setMaxWidth(40);
+    table.getColumnModel().getColumn(1).setMaxWidth(40);
+    table.getColumnModel().getColumn(2).setMaxWidth(100);
+    table.getColumnModel().getColumn(2).setPreferredWidth(100);
+    table.getColumnModel().getColumn(3).setMaxWidth(200);
+    table.getColumnModel().getColumn(3).setPreferredWidth(200);
+    table.getColumnModel().getColumn(4).setMaxWidth(500);
+    table.getColumnModel().getColumn(4).setPreferredWidth(500);
+    table.getColumnModel().getColumn(5).setMaxWidth(300);
+    table.getColumnModel().getColumn(5).setPreferredWidth(250);
+    table.getColumnModel().getColumn(6).setPreferredWidth(50);
+    TableRowSorter<TableModel> rowSorter =
+            new TableRowSorter<TableModel>(ruleTableModel);
+    // rowSorter.setComparator(2,new AlphaNumericComparator(true));
+    table.setRowSorter(rowSorter);
+  }
+
+  private String formatParameterList(AnnotationRule annotationRule) {
+    StringBuilder paramListHTML = new StringBuilder();
+    paramListHTML.append("<html>");
+    List<Parameter> paramsJapelate =
+            annotationRule.getJapelate().getParamList();
+    List<String> paramsRule = annotationRule.getParameters();
+    if(paramsRule.size() >= paramsJapelate.size()) {
+      // start at 2 to avoid ontology and rule name printing
+      // again....
+      for(int i = AnnotationRule.MINIMUM_PARAMETER_NUMBER; i < paramsJapelate.size(); i++) {
+        String separator = "";
+        if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
+        Parameter paramJ = paramsJapelate.get(i);
+        String paramR = paramsRule.get(i);
+        formatParameterPair(paramListHTML, separator, paramJ, paramR);
+      }
+      if(paramsRule.size() > paramsJapelate.size()){
+        for(int i = paramsJapelate.size(); i < paramsRule.size(); i++) {
+          String separator = "";
+          if(i != paramsRule.size() - 1) separator = ", &nbsp;&nbsp;&nbsp;";
+          Parameter paramJ = paramsJapelate.get(paramsJapelate.size()-1);
+          String paramR = paramsRule.get(i);
+          formatParameterPair(paramListHTML, separator, paramJ, paramR);
+        }
+      }
+    } else {
+      System.err.println("too few parameters for japelate "
+              + annotationRule.getJapelate().getName() + " in rule "
+              + annotationRule.getName());
+    }
+    paramListHTML.append("</html>");
+    return paramListHTML.toString();
+
+  }
+
+  private void formatParameterPair(StringBuilder paramListHTML,
+          String separator, Parameter paramJ, String paramR) {
+    if(paramR.trim().equals("")) paramR = "EMPTY";
+    switch(paramJ.getType()) {
+      case LITERAL:
+        paramListHTML.append("<font color='blue'>" + paramR + "</font>"
+                + separator);
+        break;
+      case ONTOLOGY_ENTITY:
+        paramListHTML.append("<font color='red'>"
+                + (new ONodeIDImpl(paramR, false)).getResourceName()
+                + "</font>" + separator);
+        break;
+    }
+  }
+
 
 }

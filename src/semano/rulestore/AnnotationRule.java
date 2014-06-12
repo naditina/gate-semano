@@ -6,6 +6,11 @@ import java.util.List;
 import semano.rulestore.RuleStore.Type;
 
 
+/**
+ * This class represents an annotation rule.
+ * @author nadeschda
+ *
+ */
 public class AnnotationRule {
 
 
@@ -33,61 +38,109 @@ public class AnnotationRule {
      */
     public static int RULE_ID = 0;
 
+    /**
+     * add a parameter value at the end of the parameter list
+     * @param parameterValue
+     */
     public void addParameter(String parameterValue) {
         getParameters().add(parameterValue);
     }
 
 
+    /**
+     * @return type of rule (concept, relation)
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * @param type the new type of rule
+     */
     public void setType(Type type) {
         this.type = type;
     }
 
-    public void setJapelate(Japelate template) {
-        this.template = template;
-        this.japelateName = template.getName();
+    /**
+     * @param japeplate the new japelate
+     */
+    public void setJapelate(Japelate japeplate) {
+        this.template = japeplate;
+        this.japelateName = japeplate.getName();
     }
 
+    /**
+     * @return the japelate of the rule
+     */
     public Japelate getJapelate() {
         return template;
     }
 
+    /**
+     * @return the name of the rule japelate
+     */
     public String getJapelateName() {
         return japelateName;
     }
 
-    public String getClas() {
+    /**
+     * @return the IRI of the ontoloty entity annotated by this rule
+     */
+    public String getEntityIRI() {
         return parameters.get(CLASS);
     }
 
-    public void setClas(String clas) {
-        this.parameters.set(CLASS, clas);
+    /**
+     * @param entityIRI the new IRI of the ontoloty entity annotated by this rule
+     */
+    public void setEntityIRIClas(String entityIRI) {
+        this.parameters.set(CLASS, entityIRI);
     }
 
+    /**
+     * @return the ontology IRI
+     */
     public String getOntology() {
         return parameters.get(ONTOLOGY);
     }
 
+    /**
+     * @param ontology the new ontology IRI
+     */
     public void setOntology(String ontology) {
         this.parameters.set(ONTOLOGY, ontology);
     }
 
+    /**
+     * @return the ID of the rule
+     */
     public String getName() {
         return this.parameters.get(RULE_NAME);
     }
 
+    /**
+     * @param name the new ID of the rule
+     */
     public void setName(String name) {
         this.parameters.set(RULE_NAME, name);
     }
 
+    /**
+     * @return the parameter list
+     */
     public List<String> getParameters() {
         return this.parameters;
     }
 
 
+    /**
+     * constructor used for loading rules from a file
+     * @param ruleLine rule body (parameter list)
+     * @param ontologyURI ontology IRI
+     * @param className entity IRI
+     * @param type type of rule
+     * @throws RuleParseException
+     */
     public AnnotationRule(String ruleLine, String ontologyURI, String className, Type type) throws RuleParseException {
         if (ruleLine == null || ruleLine.isEmpty() && ruleLine.indexOf(":") == -1) {
             throw new RuleParseException("Could not parse rule: " + className + " ," + ruleLine);
@@ -98,7 +151,7 @@ public class AnnotationRule {
         initParamArraySize();
         setName(ruleName);
         setOntology(ontologyURI.trim());
-        setClas(className.trim());
+        setEntityIRIClas(className.trim());
         parseCode(ruleParts[1]);
         setType(type);
         syncRuleID(getID());
@@ -125,7 +178,7 @@ public class AnnotationRule {
         this.japelateName = instantiation.substring(0, templateNameEnd).trim();
 //    template = new Japelate(instantiation.substring(0, templateNameEnd));
         if (instantiation.length() < templateNameEnd || instantiation.lastIndexOf(")") < 0)
-            throw new RuleParseException("Could not parse rule: " + getClas() + " ," + instantiation);
+            throw new RuleParseException("Could not parse rule: " + getEntityIRI() + " ," + instantiation);
         String parametersString = instantiation.substring(templateNameEnd + 1, instantiation.lastIndexOf(")"));
         String[] params = parametersString.split(",");
         int numberOfParams = params.length;
@@ -173,6 +226,10 @@ public class AnnotationRule {
         return true;
     }
 
+    /**
+     * used by the rule store to write rules to file
+     * @return formatted parameter list as it is written to file
+     */
     public String getCode() {
 
         String ruleCode = this.getName() + ": " + this.japelateName + "(";
@@ -183,10 +240,23 @@ public class AnnotationRule {
         return ruleCode;
     }
 
+    /**
+     * generates a unique rule ID
+     * @return new rule ID
+     */
     private static String generateFreshRuleID() {
         return RULE_PREFIX + RULE_ID++;
     }
 
+    /**
+     * method used to create new rules that have not been part of a rule base before
+     * 
+     * @param japelate the rule japelate
+     * @param ontology the IRI of the ontology
+     * @param entityName the IRI of the ontology entity
+     * @param type the type of the rule (concept, relation)
+     * @return new rule
+     */
     public static AnnotationRule createFreshAnnotationRule(Japelate japelate, String ontology, String entityName, Type type) {
         ArrayList<String> parameters = new ArrayList<>();
         parameters.add(RULE_NAME, generateFreshRuleID());
@@ -195,12 +265,20 @@ public class AnnotationRule {
         return new AnnotationRule(japelate, parameters, type);
     }
 
+    /**
+     * @return the integer value of the rule ID
+     */
     public int getID() {
         String stringID = getName().substring(RULE_PREFIX.length(), getName().length());
         return Integer.parseInt(stringID);
     }
 
 
+    /**
+     * this method should be called when rules are loaded into the rule store that have an ID assigned in a previous session.
+     * This will ensure that no new IDs will coinside with the IDs from previous sessions.
+     * @param id 
+     */
     private void syncRuleID(int id) {
         if (RULE_ID < id) {
             RULE_ID = id;

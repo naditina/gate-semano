@@ -18,10 +18,10 @@ import org.apache.log4j.Logger;
 
 import semano.ontologyowl.ONodeIDImpl;
 import semano.rulestore.AnnotationRule.RuleParseException;
-import semano.util.FileAndDownloadUtil;
+import semano.util.FileAndDatastructureUtil;
 
 /**
- * This is the key class to be used as part of the Java API
+ * This is the key class to be used as part of the Java API.
  * 
  * It represents s rule store that can load a rule base and provides
  * various access methods for rules and japelates.
@@ -32,7 +32,7 @@ import semano.util.FileAndDownloadUtil;
 public class RuleStore {
 
   /**
-   * This is the type of an annotation rule (concept or relation). This
+   * This is the type of an entity annotated by the  rule (concept or relation). This
    * is important as concept annotations will always be carried out
    * first.
    * 
@@ -177,7 +177,7 @@ public class RuleStore {
 
   private void parseRules(File file, Type type) {
     HashMap<String, Set<AnnotationRule>> rules = getRules(type);
-    List<String> lines = FileAndDownloadUtil.readStringsFromFile(file);
+    List<String> lines = FileAndDatastructureUtil.readStringsFromFile(file);
     String jpFileName =
             file.getName().substring(0,
                     file.getName().length() - JP_FILE_EXTENSION.length());
@@ -228,7 +228,7 @@ public class RuleStore {
   public void saveRules(Type type) {
     HashMap<String, Set<AnnotationRule>> rules = getRules(type);
     String dirPath = getDirPath(type);
-    FileAndDownloadUtil.createDirectory(dirPath, true);
+    FileAndDatastructureUtil.createDirectory(dirPath, true);
     int totalRules = 0;
     for(String phasename : rules.keySet()) {
       if(!rules.get(phasename).isEmpty()) {
@@ -236,13 +236,13 @@ public class RuleStore {
                 dirPath + getPhasenameForConcept(phasename) + JP_FILE_EXTENSION;
         // writing header:
         AnnotationRule firstRule = rules.get(phasename).iterator().next();
-        FileAndDownloadUtil.writeStringToFile(
+        FileAndDatastructureUtil.writeStringToFile(
                 fname,
-                RuleStore.generateHeader(firstRule.getClas(),
+                RuleStore.generateHeader(firstRule.getEntityIRI(),
                         firstRule.getOntology()), true);
         // writing all rules:
         for(AnnotationRule rule : rules.get(phasename)) {
-          FileAndDownloadUtil.appendStringToFile(rule.getCode(), fname);
+          FileAndDatastructureUtil.appendStringToFile(rule.getCode(), fname);
           totalRules++;
         }
       }
@@ -275,13 +275,13 @@ public class RuleStore {
         String fname = dirPath + phasename + JP_FILE_EXTENSION;
         // writing header:
         AnnotationRule firstRule = set.iterator().next();
-        FileAndDownloadUtil.writeStringToFile(
+        FileAndDatastructureUtil.writeStringToFile(
                 fname,
-                RuleStore.generateHeader(firstRule.getClas(),
+                RuleStore.generateHeader(firstRule.getEntityIRI(),
                         firstRule.getOntology()), true);
         // writing all rules:
         for(AnnotationRule rule : set) {
-          FileAndDownloadUtil.appendStringToFile(rule.getCode(), fname);
+          FileAndDatastructureUtil.appendStringToFile(rule.getCode(), fname);
           totalRules++;
         }
         System.out.println("total rules saved for " + phasename + ": "
@@ -300,7 +300,7 @@ public class RuleStore {
   public void saveRule(String ruleID) {
     AnnotationRule annotationRule = ruleID2Rule.get(ruleID);
     if(annotationRule != null) {
-      saveRules(annotationRule.getClas());
+      saveRules(annotationRule.getEntityIRI());
     }
   }
 
@@ -376,12 +376,12 @@ public class RuleStore {
   public void addRule(AnnotationRule rule, Type type) {
     if(rule == null) return;
     HashMap<String, Set<AnnotationRule>> rules = getRules(type);
-    Set<AnnotationRule> rulesForName = rules.get(rule.getClas());
+    Set<AnnotationRule> rulesForName = rules.get(rule.getEntityIRI());
     if(rulesForName == null) {
       rulesForName = new HashSet<AnnotationRule>();
     }
     rulesForName.add(rule);
-    rules.put(rule.getClas(), rulesForName);
+    rules.put(rule.getEntityIRI(), rulesForName);
     ruleID2Rule.put(rule.getName(), rule);
   }
 
@@ -397,7 +397,7 @@ public class RuleStore {
     if(rule != null) {
       ruleID2Rule.remove(ruleID);
       Set<AnnotationRule> set;
-      String entityIRI = rule.getClas();
+      String entityIRI = rule.getEntityIRI();
       if(getRules(Type.CONCEPT).containsKey(entityIRI)) {
         set = getRules(entityIRI, Type.CONCEPT);
       } else {
